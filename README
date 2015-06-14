@@ -1,0 +1,18 @@
+COMPUTER TIME s.r.l
+===================
+Progetto: Aron Tool
+Anno: Gugnio 2015
+Tony P. <antonio@ctime.it>
+
+
+I N F O
+=======
+
+Questo script viene eseguito per inserire il password 'admin' di Aron Manager,
+dopo di essere instalato.
+
+ATTENZIONE, alla fine dell'esecuzione dello script si autodistrugge.
+
+$ chmod 500 aron-setup
+$ cp aron-setup /dove/aron-manager/è/stato/instalato.
+$ ./aron-setup

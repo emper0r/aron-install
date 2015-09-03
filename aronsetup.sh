@@ -35,10 +35,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     pip install base58;
     pip install iptools;
     git clone https://github.com/darklow/django-suit;
-    cd django-suit;
+    cd /usr/local/src/django-suit;
     python setup.py install;
-    cp /usr/local/src/aron-web/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/templates/admin/base.html;
-    cp /usr/local/src/aron-web/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/config.py;
     touch /etc/squid3/mac_allow /etc/squid3/classes_allow;
     chmod 666 /etc/squid3/squid.conf \
 	      /etc/squid3/mac_allow \
@@ -57,15 +55,15 @@ if [ "$WHOAMI" = "$SU" ]; then
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';";
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;";
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql;
-    python manage.py migrate;
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/loaddata.sql;
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/;
-    mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
     mv /usr/local/src/aron-tools/fixtures/dansguardian.conf /etc/dansguardian/
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid3/
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/
+    mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
+    sed -i 's/NO/YES/g' /etc/default/firehol
     a2ensite aron.conf;
     /etc/init.d/apache2 restart;
     ifconfig eth1 192.168.0.1 netmask 255.255.255.0 up;

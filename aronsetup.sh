@@ -55,7 +55,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';";
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;";
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql;
-    mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/loaddata.sql;
+    mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init_2.sql;
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/;
@@ -67,6 +67,11 @@ if [ "$WHOAMI" = "$SU" ]; then
     a2ensite aron.conf;
     /etc/init.d/apache2 restart;
     ifconfig eth1 192.168.0.1 netmask 255.255.255.0 up;
+    mkdir /var/cache/squid3
+    /etc/init.d/squid3 stop
+    chown proxy:proxy /var/cache/squid3 -R
+    squid3 -z
+    /etc/init.d/squid3 start
 else
     echo "Errore: Devi essere root prima per eseguire questo script"
 fi

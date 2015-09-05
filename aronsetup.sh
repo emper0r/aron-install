@@ -34,6 +34,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     pip install libnacl;
     pip install base58;
     pip install iptools;
+    pip install django-tables2;
     git clone https://github.com/darklow/django-suit;
     cd /usr/local/src/django-suit;
     python setup.py install;

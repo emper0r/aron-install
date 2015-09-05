@@ -8,11 +8,9 @@ Tony P. <antonio@ctime.it>
 I N F O
 =======
 
-Questo script viene eseguito per inserire il password 'admin' di Aron Manager,
-dopo di essere instalato.
+Questo script viene eseguito per installare il prodotto aron
 
-ATTENZIONE, alla fine dell'esecuzione dello script si autodistrugge.
+Lo script chiede 4 domande per settare utenti e password,
+per il repository git e i ldatabase tutte nascoste e via.
 
-$ chmod 500 aron-setup
-$ cp aron-setup /dove/aron-manager/è/stato/instalato.
-$ ./aron-setup
+$ ./aronsetup.sh

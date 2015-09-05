@@ -71,6 +71,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     /etc/init.d/squid3 stop
     chown proxy:proxy /var/cache/squid3 -R
     squid3 -z
+    cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
     /etc/init.d/squid3 start
 else
     echo "Errore: Devi essere root prima per eseguire questo script"

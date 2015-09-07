@@ -65,15 +65,19 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/
     mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
     sed -i 's/NO/YES/g' /etc/default/firehol
+    sed -i "s/CHANGE/$ARONPASS/g" /usr/lib/squid3/logfile-daemon_mysql.pl
     a2ensite aron.conf;
     /etc/init.d/apache2 restart;
-    ifconfig eth1 192.168.0.1 netmask 255.255.255.0 up;
     mkdir /var/cache/squid3
     /etc/init.d/squid3 stop
     chown proxy:proxy /var/cache/squid3 -R
     squid3 -z
     cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
+    cp /usr/local/src/aron-tools/fixtures/interfaces /etc/network/
     /etc/init.d/squid3 start
+    rm -rfv /usr/local/src/aron-tools
+    rm -rfv /usr/local/src/django-suit
+    reboot
 else
     echo "Errore: Devi essere root prima per eseguire questo script"
 fi

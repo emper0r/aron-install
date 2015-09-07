@@ -19,7 +19,7 @@ $opts{debug} = 0;
 $opts{dbhost} = 'localhost';
 $opts{dbname} = 'aron';
 $opts{dbuser} = 'aron';
-$opts{dbpass} = 'PasswordOfFantasy';
+$opts{dbpass} = 'CHANGE';
 
 # get command line arguments
 GetOptions(

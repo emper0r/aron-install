@@ -77,7 +77,20 @@ if [ "$WHOAMI" = "$SU" ]; then
     /etc/init.d/squid3 start
     rm -rfv /usr/local/src/aron-tools
     rm -rfv /usr/local/src/django-suit
-    reboot
+    clear;
+    echo "Making cache directory ... after finish the system will be rebooted"
+    while true;
+      do
+        COUNT=`ls -lh /var/cache/squid3 | wc -l`
+        if [ $COUNT -eq 257 ];
+          then
+            clear;
+            echo "Cache directory Done!";
+            echo "Rebooting system in 3 seconds";
+            sleep 3;
+            reboot;
+        fi
+    done
 else
     echo "Errore: Devi essere root prima per eseguire questo script"
 fi

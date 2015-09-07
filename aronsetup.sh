@@ -23,7 +23,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     cd /usr/local/src;
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
-    apt-get -y install squid3 dansguardian python-mysqldb python-django python-pip python-crypto exim4-daemon-heavy dovecot-mysql firehol clamav-daemon git apache2 libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm;
+    apt-get -y install squid3 dansguardian python-mysqldb python-django python-pip python-crypto exim4-daemon-heavy dovecot-mysql firehol clamav-daemon git apache2 libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp;
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server

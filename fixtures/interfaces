@@ -9,7 +9,6 @@ iface eth1 inet static
 	address 192.168.0.1
 	netmask 255.255.255.0
 	network 192.168.0.0
-	dns-servers 8.8.8.8 8.8.4.4
 
 auto eth2
 iface eth2 inet static

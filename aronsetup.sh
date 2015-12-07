@@ -58,8 +58,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;";
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql;
     sed -i "s/CHANGEMAC/$MAC/g" /usr/local/src/aron-web/fixtures/init.sql
-    mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/config.py
-    mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.14-py2.7.egg/suit/templates/admin/base.html
+    mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/config.py
+    mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/;
     mv /usr/local/src/aron-tools/fixtures/dansguardian.conf /etc/dansguardian/
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid3/
@@ -79,6 +79,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     /etc/init.d/apache2 restart;
     mkdir /var/cache/squid3
     /etc/init.d/squid3 stop
+    /etc/init.d/dansguardian restart;
     chown proxy:proxy /var/cache/squid3 -R
     squid3 -z
     cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
@@ -87,8 +88,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     rm -rfv /usr/local/src/django-suit
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
-    echo "127.0.0.1\tlocalhost" > /etc/hosts
-    echo "192.168.0.1\taronproxy" >> /etc/hosts
+    echo "127.0.0.1        localhost" > /etc/hosts
+    echo "192.168.0.1      aronproxy" >> /etc/hosts
     clear;
     echo "Making cache directory ... after finish the system will be rebooted"
     while true;

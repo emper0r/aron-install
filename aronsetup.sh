@@ -25,14 +25,14 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo -n "Username per GIT?: ";
     read -s USERGIT
     echo
-    echo -n "Password per GIT: ";
+    echo -n "Password per GIT?: ";
     read -s PASSGIT
     apt-get update;
     apt-get -y -f dist-upgrade;
     cd /usr/local/src;
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
-    apt-get -y install squid3 dansguardian python-mysqldb python-django python-pip python-crypto firehol git apache2 libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp;
+    apt-get -y install squid3 dansguardian python-mysqldb python-django python-pip python-crypto firehol git apache2 libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt;
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server
@@ -53,6 +53,7 @@ if [ "$WHOAMI" = "$SU" ]; then
 #    chown vmail:vmail -R /srv/vmail;
     echo "www-data ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers;
     cd /usr/local/src/aron-web;
+    git checkout aron-proxy;
     mysql -u root -h localhost --password=$MYSQLPASS -e "CREATE DATABASE aron;";
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';";
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;";

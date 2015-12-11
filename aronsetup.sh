@@ -76,6 +76,7 @@ if [ "$WHOAMI" = "$SU" ]; then
               /etc/dhcp/dhcpd.conf;
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/lib/squid3/logfile-daemon_mysql.pl
+    sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
     a2ensite aron.conf;
     /etc/init.d/apache2 restart;
     mkdir /var/cache/squid3

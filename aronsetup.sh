@@ -48,9 +48,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     cd /usr/local/src/django-suit;
     python setup.py install;
     echo $MAC > /etc/firehol/mac_allow;
-#    mkdir -p /srv/vmail;
-#    useradd -r -m -U -s /bin/false -d /var/spool/vmail vmail;
-#    chown vmail:vmail -R /srv/vmail;
     echo "www-data ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers;
     cd /usr/local/src/aron-web;
     git checkout aron-proxy;
@@ -91,7 +88,11 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
-    echo "192.168.0.1      aronproxy" >> /etc/hosts
+    echo "192.168.0.1      aron" >> /etc/hosts
+    echo "192.168.0.1" > /etc/squid3/aron_server
+    echo "192.168.1.1" >> /etc/squid3/aron_server
+    echo "192.168.2.1" >> /etc/squid3/aron_server
+    chmod 666 /etc/squid3/aron_server
     clear;
     echo "Making cache directory ... after finish the system will be rebooted"
     while true;

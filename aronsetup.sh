@@ -4,9 +4,9 @@ clear
 WHOAMI=`whoami`
 SU="root"
 if [ "$WHOAMI" = "$SU" ]; then
-    echo "deb http://it.archive.ubuntu.com/ubuntu vivid main restricted universe multiverse" > /etc/apt/sources.list
-    echo "deb http://it.archive.ubuntu.com/ubuntu vivid-updates main restricted universe multiverse" >> /etc/apt/sources.list
-    echo "deb http://it.archive.ubuntu.com/ubuntu vivid-backports main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb http://it.archive.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
+    echo "deb http://it.archive.ubuntu.com/ubuntu wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb http://it.archive.ubuntu.com/ubuntu wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
     echo -n "Indirizzo MAC (in formato 00:00:00:00:00:00) del PC di gestione?: ";
     read MAC;
     echo
@@ -32,7 +32,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     cd /usr/local/src;
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
-    apt-get -y install squid3 dansguardian python-mysqldb python-django python-pip python-crypto firehol git apache2 libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt;
+    apt-get -y install squid3 dansguardian python-mysqldb python-django python-pip python-crypto firehol apache2 \
+                       libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt rrdtool;
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server
@@ -62,15 +63,10 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/dansguardian.conf /etc/dansguardian/
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid3/
     mv /usr/local/src/aron-tools/fixtures/interfaces /etc/network/interfaces
+    mv /usr/local/src/aron-toosl/fixtures/dhcpd.conf /etc/dhcp/dhcpd.conf
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/
     mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
-    chmod 666 /etc/squid3/squid.conf \
-	      /etc/firehol/mac_allow \
-              /etc/network/interfaces \
-              /var/log/squid3/cache.log \
-              /etc/dansguardian/lists/bannedsitelist \
-              /etc/dansguardian/lists/bannedurllist \
-              /etc/dhcp/dhcpd.conf;
+    tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/dansguardian/lists/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/lib/squid3/logfile-daemon_mysql.pl
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
@@ -92,7 +88,19 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "192.168.0.1" > /etc/squid3/aron_server
     echo "192.168.1.1" >> /etc/squid3/aron_server
     echo "192.168.2.1" >> /etc/squid3/aron_server
-    chmod 666 /etc/squid3/aron_server
+    echo "aron" > /etc/hostname
+    chmod 666 /etc/squid3/squid.conf \
+              /etc/firehol/mac_allow \
+              /etc/network/interfaces \
+              /etc/squid3/aron_server \
+              /etc/resolv.conf \
+              /var/log/squid3/cache.log \
+              /etc/dansguardian/lists/bannedsitelist \
+              /etc/dansguardian/lists/bannedurllist \
+              /etc/dhcp/dhcpd.conf \
+              /etc/hostname;
+    find /etc/dansguardian/lists/ -type d -exec chmod 755 {} \;
+    find /etc/dansguardian/lists/ -type f -exec chmod 666 {} \;
     clear;
     echo "Making cache directory ... after finish the system will be rebooted"
     while true;

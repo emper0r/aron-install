@@ -33,7 +33,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
     apt-get -y install squid3 dansguardian python-mysqldb python-django python-pip python-crypto firehol apache2 \
-                       libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt rrdtool;
+                       libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt;
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server
@@ -71,14 +71,11 @@ if [ "$WHOAMI" = "$SU" ]; then
     sed -i "s/CHANGE/$ARONPASS/g" /usr/lib/squid3/logfile-daemon_mysql.pl
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
     a2ensite aron.conf;
-    /etc/init.d/apache2 restart;
     mkdir /var/cache/squid3
     /etc/init.d/squid3 stop
-    /etc/init.d/dansguardian restart;
     chown proxy:proxy /var/cache/squid3 -R
     squid3 -z
     cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
-    /etc/init.d/squid3 start
     rm -rfv /usr/local/src/aron-tools
     rm -rfv /usr/local/src/django-suit
     echo "nameserver 8.8.8.8" > /etc/resolv.conf

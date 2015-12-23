@@ -45,6 +45,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     pip install base58;
     pip install iptools;
     pip install django-tables2;
+    pip install pymysql;
     git clone https://github.com/darklow/django-suit;
     cd /usr/local/src/django-suit;
     python setup.py install;

@@ -33,7 +33,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
     apt-get -y install squid3 python-mysqldb python-django python-pip python-crypto firehol apache2 \
-                       libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt;
+                       libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd;
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server
@@ -66,10 +66,12 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-toosl/fixtures/dhcpd.conf /etc/dhcp/dhcpd.conf
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/
     mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
+    mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmpd/
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid3/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/lib/squid3/logfile-daemon_mysql.pl
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/CHANGESNMP/$ARONPASS/g" /etc/snmpd/snmpd.conf
     a2ensite aron.conf;
     mkdir /var/cache/squid3
     /etc/init.d/squid3 stop
@@ -93,7 +95,8 @@ if [ "$WHOAMI" = "$SU" ]; then
               /run/resolvconf/resolv.conf \
               /var/log/squid3/cache.log \
               /etc/dhcp/dhcpd.conf \
-              /etc/hostname;
+              /etc/hostname \
+              /etc/mrtg.cfg;
     find /etc/squid3/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid3/blacklists/ -type f -exec chmod 666 {} \;
     clear;

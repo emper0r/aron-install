@@ -87,7 +87,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "192.168.1.1" >> /etc/squid3/aron_server
     echo "192.168.2.1" >> /etc/squid3/aron_server
     echo "aron" > /etc/hostname
-    chmod 666 /etc/squid3/squid.conf \
+    echo "chmod 666 /etc/squid3/squid.conf \
               /etc/firehol/mac_allow \
               /etc/network/interfaces \
               /etc/squid3/aron_server \
@@ -96,7 +96,8 @@ if [ "$WHOAMI" = "$SU" ]; then
               /var/log/squid3/cache.log \
               /etc/dhcp/dhcpd.conf \
               /etc/hostname \
-              /etc/mrtg.cfg;
+              /etc/mrtg.cfg;" >> /etc/rc.local
+    chmod +x /etc/rc.local
     find /etc/squid3/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid3/blacklists/ -type f -exec chmod 666 {} \;
     clear;

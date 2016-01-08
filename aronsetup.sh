@@ -71,7 +71,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/lib/squid3/logfile-daemon_mysql.pl
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
-    sed -i "s/CHANGESNMP/$ARONPASS/g" /etc/snmpd/snmpd.conf
     a2ensite aron.conf;
     mkdir /var/cache/squid3
     /etc/init.d/squid3 stop

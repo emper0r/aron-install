@@ -32,6 +32,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     cd /usr/local/src;
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
+    export DEBIAN_FRONTEND=noninteractive
     apt-get -y install squid3 python-mysqldb python-django python-pip python-crypto firehol apache2 \
                        libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd;
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
@@ -86,23 +87,23 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "192.168.1.1" >> /etc/squid3/aron_server
     echo "192.168.2.1" >> /etc/squid3/aron_server
     echo "aron" > /etc/hostname
-    echo "myisamchk -r /var/lib/mysql/aron/aron_logs \
-            chmod 666 /etc/squid3/squid.conf \
-            /etc/firehol/mac_allow \
-            /etc/network/interfaces \
-            /etc/squid3/aron_server \
-            /etc/resolv.conf \
-            /run/resolvconf/resolv.conf \
-            /var/log/squid3/cache.log \
-            /etc/dhcp/dhcpd.conf \
-            /etc/hostname \
-            /var/log/syslog \
-            /etc/mrtg.cfg;" >> /etc/rc.local
+    echo "myisamchk -r /var/lib/mysql/aron/aron_logs" >> /etc/rc.local
+    echo "chmod 666 /etc/squid3/squid.conf" >> /etc/rc.local
+    echo "chmod 666 /etc/firehol/mac_allow" >> /etc/rc.local
+    echo "chmod 666 /etc/network/interfaces" >> /etc/rc.local
+    echo "chmod 666 /etc/squid3/aron_server" >> /etc/rc.local
+    echo "chmod 666 /etc/resolv.conf"  >> /etc/rc.local
+    echo "chmod 666 /run/resolvconf/resolv.conf" >> /etc/rc.local
+    echo "chmod 666 /var/log/squid3/cache.log" >> /etc/rc.local
+    echo "chmod 666 /etc/dhcp/dhcpd.conf" >> /etc/rc.local
+    echo "chmod 666 /etc/hostname"  >> /etc/rc.local
+    echo "chmod 666 /var/log/syslog"  >> /etc/rc.local
+    echo "chmod 666 /etc/mrtg.cfg" >> /etc/rc.local
     chmod +x /etc/rc.local
     find /etc/squid3/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid3/blacklists/ -type f -exec chmod 666 {} \;
     clear;
-    adduser support --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --home /usr/local/src/aron-web/web/support.py --disabled-password
+    adduser support --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     echo "support:support" | chpasswd
     adduser support www-data
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py

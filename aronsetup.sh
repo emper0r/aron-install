@@ -102,6 +102,10 @@ if [ "$WHOAMI" = "$SU" ]; then
     find /etc/squid3/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid3/blacklists/ -type f -exec chmod 666 {} \;
     clear;
+    adduser support --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --home /usr/local/src/aron-web/web/support.py --disabled-password
+    echo "support:support" | chpasswd
+    adduser support www-data
+    chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
     squid3 -z &
     while true;

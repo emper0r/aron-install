@@ -69,6 +69,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/
     mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
     mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmpd/
+    mv /usr/local/src/aron-tools/fixtures/aron-exec.sh /usr/local/src/
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid3/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
@@ -99,6 +100,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "chmod 666 /etc/hostname"  >> /etc/rc.local
     echo "chmod 666 /var/log/syslog"  >> /etc/rc.local
     echo "chmod 666 /etc/mrtg.cfg" >> /etc/rc.local
+    echo "/bin/bash /usr/local/src/aron-exec.sh" >> /etc/rc.local
     chmod +x /etc/rc.local
     find /etc/squid3/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid3/blacklists/ -type f -exec chmod 666 {} \;

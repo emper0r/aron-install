@@ -16,11 +16,9 @@ if [ "$WHOAMI" = "$SU" ]; then
         echo -n "L'indirizzo MAC e' sbagliato, inserici di nuovo: ";
         read MAC;
     done
-    echo -n "Password per l'installazione MySQL server?: ";
-    read -s MYSQLPASS;
+    MYSQLPASS=`pwgen -s 32 -n 1`
     echo
-    echo -n  "Password per database aron?: ";
-    read -s ARONPASS;
+    ARONPASS=`pwgen -s 32 -n 1`
     echo
     echo -n "Username per GIT?: ";
     read -s USERGIT
@@ -33,7 +31,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install squid3 python-mysqldb python-django python-pip python-crypto firehol apache2 \
+    apt-get -y install squid3 python-mysqldb python-django python-pip python-crypto firehol apache2 pwgen \
                        libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd;
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"

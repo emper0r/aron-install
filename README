@@ -10,7 +10,4 @@ I N F O
 
 Questo script viene eseguito per installare il prodotto aron
 
-Lo script chiede 4 domande per settare utenti e password,
-per il repository git e i ldatabase tutte nascoste e via.
-
 $ ./aronsetup.sh

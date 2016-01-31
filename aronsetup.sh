@@ -16,10 +16,6 @@ if [ "$WHOAMI" = "$SU" ]; then
         echo -n "L'indirizzo MAC e' sbagliato, inserici di nuovo: ";
         read MAC;
     done
-    MYSQLPASS=`pwgen -s 32 -n 1`
-    echo
-    ARONPASS=`pwgen -s 32 -n 1`
-    echo
     echo -n "Username per GIT?: ";
     read -s USERGIT
     echo
@@ -33,6 +29,10 @@ if [ "$WHOAMI" = "$SU" ]; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y install squid3 python-mysqldb python-django python-pip python-crypto firehol apache2 pwgen \
                        libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd;
+    MYSQLPASS=`pwgen -s 32 -n 1`
+    echo
+    ARONPASS=`pwgen -s 32 -n 1`
+    echo
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server

@@ -27,7 +27,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install squid3 python-mysqldb python-django python-pip python-crypto firehol apache2 pwgen \
+    apt-get -y install squid3 python-mysqldb python-django python-pip python-crypto firehol apache2 pwgen sshpass \
                        libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd;
     MYSQLPASS=`pwgen -s 32 -n 1`
     echo

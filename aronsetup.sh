@@ -62,6 +62,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf;
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid3/
+    mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid3/log_db_daemon
     mv /usr/local/src/aron-tools/fixtures/interfaces /etc/network/interfaces
     mv /usr/local/src/aron-toosl/fixtures/dhcpd.conf /etc/dhcp/dhcpd.conf
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/

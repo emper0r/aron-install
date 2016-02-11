@@ -164,7 +164,7 @@ if ($EVAL_ERROR) {
 
 # for better performance, prepare the statement at startup
 eval {
-    my $q ="INSERT INTO $table VALUES(NULL,FROM_UNIXTIME(?),?,?,?,?,?,?,?,?,?,?,?)";
+    my $q ="INSERT INTO $table (id, time_since_epoch, time_response, ip_client, squid_request_status, http_status_code, http_reply_size, http_method, http_url, http_username, squid_hier_status, ip_server, http_mime_type)VALUES(NULL,FROM_UNIXTIME(?),?,?,?,?,?,?,?,?,?,?,?)";
     $sth = $dbh->prepare($q);
 };
 if ($EVAL_ERROR) {

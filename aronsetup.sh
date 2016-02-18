@@ -50,6 +50,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     python setup.py install;
     echo $MAC > /etc/firehol/mac_allow;
     echo "www-data ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers;
+    echo "support ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers;
     cd /usr/local/src/aron-web;
     git checkout aron-proxy;
     mysql -u root -h localhost --password=$MYSQLPASS -e "CREATE DATABASE aron;";

@@ -110,7 +110,11 @@ if [ "$WHOAMI" = "$SU" ]; then
     adduser support www-data
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
-    squid3 -z &
+    mv /usr/local/src/aron-toosl/fixtures/myCA.pem /etc/squid3/myCA.pem
+    mv /usr/local/src/aron-toosl/fixtures/myCA.der /etc/squid3/myCA.der
+    /usr/lib/squid3/ssl_crtd -c -s /var/lib/ssl_db/
+    chown proxy:proxy /var/lib/ssl_db/ -R
+    /usr/sbin/squid3 -z &
     while true;
       do
         COUNT=`ls -lh /var/cache/squid3 | wc -l`

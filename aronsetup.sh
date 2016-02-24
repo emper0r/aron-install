@@ -72,6 +72,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid3/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
+    sed -i 's/80/8088/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
     mkdir /var/cache/squid3
     /etc/init.d/squid3 stop
     chown proxy:proxy /var/cache/squid3 -R

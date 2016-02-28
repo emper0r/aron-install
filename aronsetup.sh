@@ -43,7 +43,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     pip install libnacl
     pip install base58
     pip install iptools
-    pip install django-tables2
     pip install pymysql
     git clone https://github.com/darklow/django-suit
     cd /usr/local/src/django-suit
@@ -78,7 +77,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid3/log_db_daemon
     chmod 755 /usr/lib/squid3/log_db_daemon
     mv /usr/local/src/aron-toosl/fixtures/myCA.pem /etc/squid3/myCA.pem
-    mv /usr/local/src/aron-toosl/fixtures/myCA.der /etc/squid3/myCA.der
+    mv /usr/local/src/aron-toosl/fixtures/myCA.der /usr/local/src/aron-web/static/aron-prox.der
     /usr/lib/squid3/ssl_crtd -c -s /var/lib/ssl_db/
     chown proxy:proxy /var/lib/ssl_db/ -R
     touch /var/log/squid3/cache.log

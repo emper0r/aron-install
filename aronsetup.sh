@@ -77,7 +77,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     /etc/init.d/squid3 stop
     chown proxy:proxy /var/cache/squid3 -R
     cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
-    rm -rfv /usr/local/src/aron-tools
     rm -rfv /usr/local/src/django-suit
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
@@ -114,6 +113,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-toosl/fixtures/myCA.der /etc/squid3/myCA.der
     /usr/lib/squid3/ssl_crtd -c -s /var/lib/ssl_db/
     chown proxy:proxy /var/lib/ssl_db/ -R
+    rm -rfv /usr/local/src/aron-tools
     /usr/sbin/squid3 -z &
     while true;
       do

@@ -74,6 +74,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     chown proxy:proxy /var/cache/squid3 -R
     cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid3/
+    mv /usr/local/src/aron-tools/fixtures/aron-booster /etc/squid3/
     mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid3/log_db_daemon
     chmod 755 /usr/lib/squid3/log_db_daemon
     mv /usr/local/src/aron-toosl/fixtures/myCA.pem /etc/squid3/myCA.pem

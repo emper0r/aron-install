@@ -27,7 +27,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 pwgen sshpass \
+    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 pwgen sshpass libltdl7 \
                        libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd
     MYSQLPASS=`pwgen -s 32 -n 1`
     echo
@@ -61,20 +61,19 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
+    touch /etc/squid3/mime.conf
     dpkg -i /usr/local/src/aron-tools/fixtures/libdb5.1_5.1.29-7ubuntu1_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-langpack_20150704-1_all.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.3.8-1ubuntu16_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid3-common_3.4.9_all.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid3_3.4.9_amd64.deb
     /etc/init.d/squid3 stop
-    touch /etc/squid3/mime.conf
-    rm -rfv /var/cache/squid/
+    rm -rfv /var/cache/squid3/
     rm -f /etc/squid3/squid.conf
     mkdir /var/cache/squid3
     chown proxy:proxy /var/cache/squid3 -R
     cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid3/
-    mv /usr/local/src/aron-tools/fixtures/aron-booster /etc/squid3/
     mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid3/log_db_daemon
     chmod 755 /usr/lib/squid3/log_db_daemon
     mv /usr/local/src/aron-toosl/fixtures/myCA.pem /etc/squid3/myCA.pem
@@ -84,7 +83,10 @@ if [ "$WHOAMI" = "$SU" ]; then
     touch /var/log/squid3/cache.log
     chmod 666 /var/log/squid3/cache.log /etc/squid3/mime.conf
     chown proxy:proxy /var/log/squid3/cache.log
-    mv /etc/init.d/squid3.dpkg-new /etc/init.d/squid3
+    rm -rfv /usr/share/squid3/errors/it/*
+    rm -rfv /usr/share/squid3/errors/it-it/*
+    cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid3/errors/it/
+    cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid3/errors/it-it/
     mv /usr/local/src/aron-tools/fixtures/interfaces /etc/network/interfaces
     mv /usr/local/src/aron-toosl/fixtures/dhcpd.conf /etc/dhcp/dhcpd.conf
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/

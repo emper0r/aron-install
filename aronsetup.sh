@@ -61,6 +61,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
+    mkdir /etc/squid3
     touch /etc/squid3/mime.conf
     dpkg -i /usr/local/src/aron-tools/fixtures/libdb5.1_5.1.29-7ubuntu1_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-langpack_20150704-1_all.deb

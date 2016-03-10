@@ -4,9 +4,9 @@ clear
 WHOAMI=`whoami`
 SU="root"
 if [ "$WHOAMI" = "$SU" ]; then
-    echo "deb http://it.archive.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
-    echo "deb http://it.archive.ubuntu.com/ubuntu wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
-    echo "deb http://it.archive.ubuntu.com/ubuntu wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb http://ftp.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
+    echo "deb http://ftp.ubuntu.com/ubuntu wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb http://ftp.ubuntu.com/ubuntu wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
     echo -n "Indirizzo MAC (in formato 00:00:00:00:00:00) del PC di gestione?: "
     read MAC
     echo
@@ -27,7 +27,9 @@ if [ "$WHOAMI" = "$SU" ]; then
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
     cd /usr/local/src/aron-tools
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 pwgen sshpass libltdl7 \
+    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin \
+                       apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack \
+                       ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl \
                        libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd
     MYSQLPASS=`pwgen -s 32 -n 1`
     echo
@@ -61,40 +63,35 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
-    mkdir /etc/squid3
-    touch /etc/squid3/mime.conf
-    dpkg -i /usr/local/src/aron-tools/fixtures/libdb5.1_5.1.29-7ubuntu1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-langpack_20150704-1_all.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3-dev_1.0.1-3_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3_1.0.1-3_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-common_3.5.15-1_all.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.3.8-1ubuntu16_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid3-common_3.4.9_all.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid3_3.4.9_amd64.deb
-    /etc/init.d/squid3 stop
-    rm -rfv /var/cache/squid3/
-    rm -f /etc/squid3/squid.conf
-    mkdir /var/cache/squid3
-    chown proxy:proxy /var/cache/squid3 -R
-    cp /usr/local/src/aron-tools/fixtures/init-daemon-squid3 /etc/init.d/squid3
-    mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid3/
-    mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid3/
-    mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid3/log_db_daemon
-    chmod 755 /usr/lib/squid3/log_db_daemon
-    mv /usr/local/src/aron-tools/fixtures/myCA.pem /etc/squid3/myCA.pem
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-cgi_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-purge_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-dbg_3.5.15-1_amd64.deb
+    /etc/init.d/squid stop
+    rm -rfv /var/cache/squid/
+    rm -f /etc/squid/squid.conf
+    mkdir /var/cache/squid
+    chown proxy:proxy /var/cache/squid -R
+    mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid/
+    mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid/
+    mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid/log_db_daemon
+    chmod 755 /usr/lib/squid/log_db_daemon
+    mv /usr/local/src/aron-tools/fixtures/myCA.pem /etc/squid/myCA.pem
     mv /usr/local/src/aron-tools/fixtures/myCA.der /usr/local/src/aron-web/static/aron-prox.der
-    /usr/lib/squid3/ssl_crtd -c -s /var/lib/ssl_db/
+    /usr/lib/squid/ssl_crtd -c -s /var/lib/ssl_db/
     chown proxy:proxy /var/lib/ssl_db/ -R
-    touch /var/log/squid3/cache.log
-    chmod 666 /var/log/squid3/cache.log /etc/squid3/mime.conf
-    chown proxy:proxy /var/log/squid3/cache.log
-    rm -rfv /usr/share/squid3/errors/it/*
-    rm -rfv /usr/share/squid3/errors/it-it/*
-    cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid3/errors/it/
-    cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid3/errors/it-it/
+    rm -rfv /usr/share/squid/errors/Italian/*
+    cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid/errors/Italian/
     mv /usr/local/src/aron-tools/fixtures/interfaces /etc/network/interfaces
     mv /usr/local/src/aron-toosl/fixtures/dhcpd.conf /etc/dhcp/dhcpd.conf
-    mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid3/
+    mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid/
     mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
     mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmpd/
-    tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid3/
+    tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
     sed -i 's/80/8088/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
@@ -103,27 +100,27 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
     echo "192.168.0.1      aron" >> /etc/hosts
-    echo "192.168.0.1" > /etc/squid3/aron_server
-    echo "192.168.1.1" >> /etc/squid3/aron_server
-    echo "192.168.2.1" >> /etc/squid3/aron_server
+    echo "192.168.0.1" > /etc/squid/aron_server
+    echo "192.168.1.1" >> /etc/squid/aron_server
+    echo "192.168.2.1" >> /etc/squid/aron_server
     echo "aron" > /etc/hostname
-    touch /etc/squid3/black_domain
+    touch /etc/squid/black_domain
     echo "myisamchk -r /var/lib/mysql/aron/aron_logs" >> /etc/rc.local
-    echo "chmod 666 /etc/squid3/squid.conf" >> /etc/rc.local
+    echo "chmod 666 /etc/squid/squid.conf" >> /etc/rc.local
     echo "chmod 666 /etc/firehol/mac_allow" >> /etc/rc.local
     echo "chmod 666 /etc/network/interfaces" >> /etc/rc.local
-    echo "chmod 666 /etc/squid3/aron_server" >> /etc/rc.local
+    echo "chmod 666 /etc/squid/aron_server" >> /etc/rc.local
     echo "chmod 666 /etc/resolv.conf"  >> /etc/rc.local
     echo "chmod 666 /run/resolvconf/resolv.conf" >> /etc/rc.local
-    echo "chmod 666 /var/log/squid3/cache.log" >> /etc/rc.local
+    echo "chmod 666 /var/log/squid/cache.log" >> /etc/rc.local
     echo "chmod 666 /etc/dhcp/dhcpd.conf" >> /etc/rc.local
     echo "chmod 666 /etc/hostname"  >> /etc/rc.local
     echo "chmod 666 /var/log/syslog"  >> /etc/rc.local
     echo "chmod 666 /etc/mrtg.cfg" >> /etc/rc.local
-    echo "chmod 666 /etc/squid3/black_domain" >> /etc/rc.local
+    echo "chmod 666 /etc/squid/black_domain" >> /etc/rc.local
     chmod +x /etc/rc.local
-    find /etc/squid3/blacklists/ -type d -exec chmod 755 {} \;
-    find /etc/squid3/blacklists/ -type f -exec chmod 666 {} \;
+    find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
+    find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     clear
     adduser support --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     echo "support:support" | chpasswd
@@ -131,10 +128,10 @@ if [ "$WHOAMI" = "$SU" ]; then
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
     rm -rfv /usr/local/src/aron-tools
-    /usr/sbin/squid3 -z &
+    /usr/sbin/squid -z &
     while true;
       do
-        COUNT=`ls -lh /var/cache/squid3 | wc -l`
+        COUNT=`ls -lh /var/cache/squid | wc -l`
         if [ $COUNT -eq 257 ];
           then
             clear;

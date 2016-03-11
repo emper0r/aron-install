@@ -66,7 +66,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     dpkg -i /usr/local/src/aron-tools/fixtures/libecap3-dev_1.0.1-3_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/libecap3_1.0.1-3_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-common_3.5.15-1_all.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.3.8-1ubuntu16_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-cgi_3.5.15-1_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-purge_3.5.15-1_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid_3.5.15-1_amd64.deb
@@ -86,10 +85,107 @@ if [ "$WHOAMI" = "$SU" ]; then
     chown proxy:proxy /var/lib/ssl_db/ -R
     rm -rfv /usr/share/squid/errors/Italian/*
     cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid/errors/Italian/
-    mv /usr/local/src/aron-tools/fixtures/interfaces /etc/network/interfaces
-    mv /usr/local/src/aron-toosl/fixtures/dhcpd.conf /etc/dhcp/dhcpd.conf
+    eth0=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 1p`
+    eth1=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 2p`
+    eth2=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 3p`
+    eth3=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 4p`
+    cat > /etc/network/interfaces << EOF
+auto lo $eth0 $eth1 $eth2 $eth3
+iface lo inet loopback
+
+iface $eth0 inet dhcp
+
+iface $eth1 inet static
+	address 192.168.0.1
+	netmask 255.255.255.0
+	network 192.168.0.0
+
+iface $eth2 inet static
+	address 192.168.1.1
+	netmask 255.255.255.0
+	network 192.168.1.0
+
+iface $eth3 inet static
+	address 192.168.2.1
+	netmask 255.255.255.0
+	network 192.168.2.0
+EOF
+    cat > /etc/firehol/firehol.conf << EOF
+# Firewall config
+
+version 6
+LAN="10.0.0.0/8 172.16.0.0/16 192.168.0.0/16"
+
+ipv4 transparent_proxy 80 3128 "root proxy" inface $eth1
+ipv4 transparent_proxy 80 3128 "root proxy" inface $eth2
+ipv4 transparent_proxy 80 3128 "root proxy" inface $eth3
+
+FIREHOL_LOG_LEVEL=7
+interface4 $eth0 ethernet
+    UNMATCHED_INPUT_POLICY=DROP
+    UNMATCHED_OUTPUT_POLICY=DROP
+    UNMATCHED_FORWARD_POLICY=DROP
+    FIREHOL_LOG_FREQUENCY="1/second"
+    FIREHOL_LOG_BURST="1"
+    policy drop
+    protection strong 5/sec 5
+    ipv4 server ident reject with tcp-reset
+    ipv4 server "icmp ssh" accept
+    ipv4 client all accept
+
+interface4 $eth1 lan src "\${LAN}"
+    policy accept
+    ipv4 server all accept
+    ipv4 client all accept
+
+interface4 $eth2 segretaria src "\${LAN}"
+    policy accept
+    ipv4 server all accept
+    ipv4 client all accept
+
+interface4 $eth3 discovery src "\${LAN}"
+    policy accept
+    ipv4 server all accept
+    ipv4 client all accept
+
+router4 lan-1-inet inface $eth1 outface eth0
+    masquerade
+    route4 all accept
+
+router4 lan-2-inet inface $eth2 outface eth0
+    masquerade
+    route4 all accept
+
+router4 lan-3-inet inface $eth3 outface eth0
+    masquerade
+    route4 all accept
+EOF
+    cat > /etc/dhcp/dhcpd.conf << EOF
+ddns-update-style none;
+authoritative;
+option domain-name "aron.local";
+option domain-name-servers 8.8.8.8, 8.8.4.4;
+default-lease-time 7200;
+max-lease-time 7200;
+log-facility local7;
+
+subnet 192.168.0.0 netmask 255.255.255.0 {
+	interface $eth1;
+	range 192.168.0.10 192.168.0.254;
+	option routers 192.168.0.1;
+}
+subnet 192.168.1.0 netmask 255.255.255.0 {
+	interface $eth2;
+	range 192.168.1.10 192.168.1.254;
+	option routers 192.168.1.1;
+}
+subnet 192.168.2.0 netmask 255.255.255.0 {
+	interface $eth3;
+	range 192.168.2.10 192.168.2.254;
+	option routers 192.168.2.1;
+}
+EOF
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid/
-    mv /usr/local/src/aron-tools/fixtures/firehol.conf /etc/firehol/
     mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmpd/
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sed -i 's/NO/YES/g' /etc/default/firehol

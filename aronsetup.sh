@@ -79,8 +79,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid/
     mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid/log_db_daemon
     chmod 755 /usr/lib/squid/log_db_daemon
-    mv /usr/local/src/aron-tools/fixtures/myCA.pem /etc/squid/myCA.pem
-    mv /usr/local/src/aron-tools/fixtures/myCA.der /usr/local/src/aron-web/static/aron-prox.der
+    mv /usr/local/src/aron-tools/fixtures/aron-proxy.pem /etc/squid/
+    mv /usr/local/src/aron-tools/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
     /usr/lib/squid/ssl_crtd -c -s /var/lib/ssl_db/
     chown proxy:proxy /var/lib/ssl_db/ -R
     rm -rfv /usr/share/squid/errors/Italian/*
@@ -214,6 +214,14 @@ EOF
     echo "chmod 666 /var/log/syslog"  >> /etc/rc.local
     echo "chmod 666 /etc/mrtg.cfg" >> /etc/rc.local
     echo "chmod 666 /etc/squid/black_domain" >> /etc/rc.local
+    echo "sysctl -w net.core.rmem_max=8388608" >> /etc/rc.local
+    echo "sysctl -w net.core.wmem_max=8388608 " >> /etc/rc.local
+    echo "sysctl -w net.core.rmem_default=65536 " >> /etc/rc.local
+    echo "sysctl -w net.core.wmem_default=65536 " >> /etc/rc.local
+    echo "sysctl -w net.ipv4.tcp_rmem='4096 87380 8388608' " >> /etc/rc.local
+    echo "sysctl -w net.ipv4.tcp_wmem='4096 65536 8388608' " >> /etc/rc.local
+    echo "sysctl -w net.ipv4.tcp_mem='8388608 8388608 8388608' " >> /etc/rc.local
+    echo "sysctl -w net.ipv4.route.flush=1 " >> /etc/rc.local
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;

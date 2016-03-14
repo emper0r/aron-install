@@ -59,9 +59,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;"
     sed -i "s/CHANGEMAC/$MAC/g" /usr/local/src/aron-web/fixtures/init.sql
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
-    rm -f /usr/local/src/aron-web/fixtures/init.sql
-    mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/config.py
-    mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.15-py2.7.egg/suit/templates/admin/base.html
+    mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/config.py
+    mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
     dpkg -i /usr/local/src/aron-tools/fixtures/libecap3-dev_1.0.1-3_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/libecap3_1.0.1-3_amd64.deb
@@ -96,19 +95,19 @@ iface lo inet loopback
 iface $eth0 inet dhcp
 
 iface $eth1 inet static
-	address 192.168.0.1
+	address 192.168.50.1
 	netmask 255.255.255.0
-	network 192.168.0.0
+	network 192.168.50.0
 
 iface $eth2 inet static
-	address 192.168.1.1
+	address 192.168.50.1
 	netmask 255.255.255.0
-	network 192.168.1.0
+	network 192.168.60.0
 
 iface $eth3 inet static
-	address 192.168.2.1
+	address 192.168.70.1
 	netmask 255.255.255.0
-	network 192.168.2.0
+	network 192.168.70.0
 EOF
     cat > /etc/firehol/firehol.conf << EOF
 # Firewall config
@@ -148,15 +147,15 @@ interface4 $eth3 discovery src "\${LAN}"
     ipv4 server all accept
     ipv4 client all accept
 
-router4 lan-1-inet inface $eth1 outface eth0
+router4 lan-1-inet inface $eth1 outface $eth0
     masquerade
     route4 all accept
 
-router4 lan-2-inet inface $eth2 outface eth0
+router4 lan-2-inet inface $eth2 outface $eth0
     masquerade
     route4 all accept
 
-router4 lan-3-inet inface $eth3 outface eth0
+router4 lan-3-inet inface $eth3 outface $eth0
     masquerade
     route4 all accept
 EOF
@@ -169,20 +168,20 @@ default-lease-time 7200;
 max-lease-time 7200;
 log-facility local7;
 
-subnet 192.168.0.0 netmask 255.255.255.0 {
+subnet 192.168.50.0 netmask 255.255.255.0 {
 	interface $eth1;
-	range 192.168.0.10 192.168.0.254;
-	option routers 192.168.0.1;
+	range 192.168.50.10 192.168.50.254;
+	option routers 192.168.50.1;
 }
-subnet 192.168.1.0 netmask 255.255.255.0 {
+subnet 192.168.60.0 netmask 255.255.255.0 {
 	interface $eth2;
-	range 192.168.1.10 192.168.1.254;
-	option routers 192.168.1.1;
+	range 192.168.60.10 192.168.60.254;
+	option routers 192.168.60.1;
 }
-subnet 192.168.2.0 netmask 255.255.255.0 {
+subnet 192.168.70.0 netmask 255.255.255.0 {
 	interface $eth3;
-	range 192.168.2.10 192.168.2.254;
-	option routers 192.168.2.1;
+	range 192.168.70.10 192.168.70.254;
+	option routers 192.168.70.1;
 }
 EOF
     mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid/
@@ -195,13 +194,13 @@ EOF
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
-    echo "192.168.0.1      aron" >> /etc/hosts
-    echo "192.168.0.1" > /etc/squid/aron_server
-    echo "192.168.1.1" >> /etc/squid/aron_server
-    echo "192.168.2.1" >> /etc/squid/aron_server
+    echo "192.168.50.1      aron" >> /etc/hosts
+    echo "192.168.50.1" > /etc/squid/aron_server
+    echo "192.168.60.1" >> /etc/squid/aron_server
+    echo "192.168.70.1" >> /etc/squid/aron_server
     echo "aron" > /etc/hostname
     touch /etc/squid/black_domain
-    echo "myisamchk -r /var/lib/mysql/aron/aron_logs" >> /etc/rc.local
+    echo "myisamchk -r /var/lib/mysql/aron/aron_logs" > /etc/rc.local
     echo "chmod 666 /etc/squid/squid.conf" >> /etc/rc.local
     echo "chmod 666 /etc/firehol/mac_allow" >> /etc/rc.local
     echo "chmod 666 /etc/network/interfaces" >> /etc/rc.local
@@ -215,13 +214,14 @@ EOF
     echo "chmod 666 /etc/mrtg.cfg" >> /etc/rc.local
     echo "chmod 666 /etc/squid/black_domain" >> /etc/rc.local
     echo "sysctl -w net.core.rmem_max=8388608" >> /etc/rc.local
-    echo "sysctl -w net.core.wmem_max=8388608 " >> /etc/rc.local
-    echo "sysctl -w net.core.rmem_default=65536 " >> /etc/rc.local
-    echo "sysctl -w net.core.wmem_default=65536 " >> /etc/rc.local
-    echo "sysctl -w net.ipv4.tcp_rmem='4096 87380 8388608' " >> /etc/rc.local
-    echo "sysctl -w net.ipv4.tcp_wmem='4096 65536 8388608' " >> /etc/rc.local
-    echo "sysctl -w net.ipv4.tcp_mem='8388608 8388608 8388608' " >> /etc/rc.local
-    echo "sysctl -w net.ipv4.route.flush=1 " >> /etc/rc.local
+    echo "sysctl -w net.core.wmem_max=8388608" >> /etc/rc.local
+    echo "sysctl -w net.core.rmem_default=65536" >> /etc/rc.local
+    echo "sysctl -w net.core.wmem_default=65536" >> /etc/rc.local
+    echo "sysctl -w net.ipv4.tcp_rmem='4096 87380 8388608'" >> /etc/rc.local
+    echo "sysctl -w net.ipv4.tcp_wmem='4096 65536 8388608'" >> /etc/rc.local
+    echo "sysctl -w net.ipv4.tcp_mem='8388608 8388608 8388608'" >> /etc/rc.local
+    echo "sysctl -w net.ipv4.route.flush=1" >> /etc/rc.local
+    echo "exit 0" >> /etc/rc.local
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
@@ -232,6 +232,7 @@ EOF
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
     rm -rfv /usr/local/src/aron-tools
+    rm -fv /usr/local/src/aron-web/fixtures/init.sql
     /usr/sbin/squid -z &
     while true;
       do

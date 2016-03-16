@@ -100,7 +100,7 @@ iface $eth1 inet static
 	network 192.168.50.0
 
 iface $eth2 inet static
-	address 192.168.50.1
+	address 192.168.60.1
 	netmask 255.255.255.0
 	network 192.168.60.0
 

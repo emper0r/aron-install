@@ -57,8 +57,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     mysql -u root -h localhost --password=$MYSQLPASS -e "CREATE DATABASE aron;"
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';"
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;"
-    sed -i "s/CHANGEMAC/$MAC/g" /usr/local/src/aron-web/fixtures/init.sql
-    mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
@@ -190,10 +188,17 @@ EOF
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/CHANGEMAC/$MAC/g" /usr/local/src/aron-web/fixtures/init.sql
+    sleep 1
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
+    sleep 1
     sed -i "s/CHANGE_ETH1/$eth1/g" /usr/local/src/aron-web/fixtures/init.sql
+    sleep 1
     sed -i "s/CHANGE_ETH2/$eth2/g" /usr/local/src/aron-web/fixtures/init.sql
+    sleep 1
     sed -i "s/CHANGE_ETH3/$eth3/g" /usr/local/src/aron-web/fixtures/init.sql
+    sleep 1
+    mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
     sed -i 's/80/8088/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
     rm -rfv /usr/local/src/django-suit
     echo "nameserver 8.8.8.8" > /etc/resolv.conf

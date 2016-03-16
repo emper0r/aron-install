@@ -206,12 +206,12 @@ EOF
     echo "chmod 666 /etc/firehol/mac_allow" >> /etc/rc.local
     echo "chmod 666 /etc/network/interfaces" >> /etc/rc.local
     echo "chmod 666 /etc/squid/aron_server" >> /etc/rc.local
-    echo "chmod 666 /etc/resolv.conf"  >> /etc/rc.local
+    echo "chmod 666 /etc/resolv.conf" >> /etc/rc.local
     echo "chmod 666 /run/resolvconf/resolv.conf" >> /etc/rc.local
     echo "chmod 666 /var/log/squid/cache.log" >> /etc/rc.local
     echo "chmod 666 /etc/dhcp/dhcpd.conf" >> /etc/rc.local
-    echo "chmod 666 /etc/hostname"  >> /etc/rc.local
-    echo "chmod 666 /var/log/syslog"  >> /etc/rc.local
+    echo "chmod 666 /etc/hostname" >> /etc/rc.local
+    echo "chmod 666 /var/log/syslog" >> /etc/rc.local
     echo "chmod 666 /etc/mrtg.cfg" >> /etc/rc.local
     echo "chmod 666 /etc/squid/black_domain" >> /etc/rc.local
     echo "sysctl -w net.core.rmem_max=8388608" >> /etc/rc.local

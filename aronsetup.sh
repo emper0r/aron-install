@@ -69,7 +69,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-purge_3.5.15-1_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid_3.5.15-1_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-dbg_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.5.15-1_amd64
+    dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.5.15-1_amd64.deb
     /etc/init.d/squid stop
     rm -rfv /var/cache/squid/
     rm -f /etc/squid/squid.conf

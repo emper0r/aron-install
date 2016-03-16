@@ -214,6 +214,7 @@ EOF
     echo "myisamchk -r /var/lib/mysql/aron/aron_logs" >> /etc/rc.local
     echo "chmod 666 /etc/squid/squid.conf" >> /etc/rc.local
     echo "chmod 666 /etc/firehol/mac_allow" >> /etc/rc.local
+    echo "chmod 666 /etc/firehol/firehol.conf" >> /etc/rc.local
     echo "chmod 666 /etc/network/interfaces" >> /etc/rc.local
     echo "chmod 666 /etc/squid/aron_server" >> /etc/rc.local
     echo "chmod 666 /etc/resolv.conf" >> /etc/rc.local

@@ -29,7 +29,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin \
                        apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack \
-                       ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl \
+                       ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader \
                        libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd
     MYSQLPASS=`pwgen -s 32 -n 1`
     echo
@@ -198,6 +198,7 @@ EOF
     sleep 1
     sed -i "s/CHANGE_ETH3/$eth3/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
+    sed -i 's/#rocommunity public  localhost/rocommunity public  localhost/g' /etc/snmp/snmpd.conf
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
     sed -i 's/80/8088/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
     rm -rfv /usr/local/src/django-suit

@@ -211,9 +211,11 @@ EOF
     echo "192.168.70.1" >> /etc/squid/aron_server
     echo "aron" > /etc/hostname
     touch /etc/squid/black_domain
+    touch /etc/squid/squid.conf.aron
     echo "#!/bin/sh -e" > /etc/rc.local
     echo "myisamchk -r /var/lib/mysql/aron/aron_logs" >> /etc/rc.local
     echo "chmod 666 /etc/squid/squid.conf" >> /etc/rc.local
+    echo "chmod 666 /etc/squid/squid.conf.aron" >> /etc/rc.local
     echo "chmod 666 /etc/firehol/mac_allow" >> /etc/rc.local
     echo "chmod 666 /etc/firehol/firehol.conf" >> /etc/rc.local
     echo "chmod 666 /etc/network/interfaces" >> /etc/rc.local

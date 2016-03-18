@@ -1,5 +1,5 @@
-^https?\:\/\/download\.oracle\.com\/((otn\-pub|otn)\/[\d\w]+\/[\d\w]+\/[\w\d\-]+\/[\w\d\-]+\.(exe|dmg|rpm|msi|tar\.(gz|Z)))\?                   http://java.aron.squid.internal/$1
-^https?\:\/\/([\d\w\-]+)\.oracle\.com\/(([\d\w]+)\/[\d\w]+\/[\d\w]+\/([\d\w\-]+)\/([\d\w]+\/)?[\d\w\-\.\_]+\.(dmg|msi|exe|tar\.gz|tar\.Z))\?                    http://java.aron.squid.internal/$1
+^http?s\:\/\/download\.oracle\.com\/((otn\-pub|otn)\/[\d\w]+\/[\d\w]+\/[\w\d\-]+\/[\w\d\-]+\.(exe|dmg|rpm|msi|tar\.(gz|Z)))\?                   http://java.aron.squid.internal/$1
+^http?s\:\/\/([\d\w\-]+)\.oracle\.com\/(([\d\w]+)\/[\d\w]+\/[\d\w]+\/([\d\w\-]+)\/([\d\w]+\/)?[\d\w\-\.\_]+\.(dmg|msi|exe|tar\.gz|tar\.Z))\?                    http://java.aron.squid.internal/$1
 
 ^http?s:\/\/[^\.]+\.phobos\.apple\.com\/(.*)	http://apple.aron.squid.internal/$1
 
@@ -42,10 +42,10 @@ galleries\.video(\?|sz) 	http://video.aron.squid.internal/$1
 (autoup|main|autoupgrade)\.exe$	http://av-upd.aron.squid.internal/$1
 (update.ini|Update.ini|version.list|Version.list|update.1st|update.exe|autoup.exe)$	http://av-upd.aron.squid.internal/$1
 
-(avgate|avira).*\.(idx|gz)$ http://av-data.aron.squid.internal/$1
-kaspersky.*\.avc$   http://av-data.aron.squid.internal/$1
-update.nai.com/.*\.(gem|zip|mcs)    http://av-data.aron.squid.internal/$1
-^http:\/\/liveupdate.symantecliveupdate.com.*\.zip  http://av-data.aron.squid.internal/$1
+(avgate|avira)\.(idx|gz)$ http://av-data.aron.squid.internal/$1
+kaspersky\.avc$   http://av-data.aron.squid.internal/$1
+update.nai.com\/*.(gem|zip|mcs)$    http://av-data.aron.squid.internal/$1
+^http:\/\/liveupdate\.symantecliveupdate\.com\/(*.(zip|m26))$  http://av-data.aron.squid.internal/$1
 
 ((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2}).*\.(z|png|aup|cer|vpu|vpk|kom|woff|pak|mst|upd|pkg|7z|swz|dsft|xpi|arj|idx|psf|bin|bz2|cab|dll|exe|gz|inc|iso|jar|lha|dmg|ms(i|p|u)|rpm|tar|tgz|rtp|rpz|nui|kom|stg|pak|sup|nzp|npz|iop|z(ip|[0-9]{2})|r(ar|[0-9]{2}))$ 	http://files.aron.squid.internal/$1
 .(z|png|aup|cer|vpu|vpk|kom|woff|pak|mst|upd|pkg|7z|swz|dsft|xpi|arj|idx|psf|bin|bz2|cab|dll|exe|gz|inc|iso|jar|lha|dmg|ms(i|p|u)|rpm|tar|tgz|rtp|rpz|nui|kom|stg|pak|sup|nzp|npz|iop|z(ip|[0-9]{2})|r(ar|[0-9]{2}))$ 	http://files.aron.squid.internal/$1

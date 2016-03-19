@@ -21,6 +21,9 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo
     echo -n "Password per GIT?: "
     read -s PASSGIT
+    echo
+    echo -n "Misura della Cache sul disco?: "
+    read SIZE
     apt-get update
     apt-get -y -f dist-upgrade
     cd /usr/local/src
@@ -241,6 +244,9 @@ EOF
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     clear
+    CACHESIZE=$(($SIZE * 1024))
+    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py
+    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-tools/fixtures/squid.conf
     adduser support --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     echo "support:support" | chpasswd
     adduser support www-data

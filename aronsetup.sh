@@ -2,19 +2,14 @@
 
 clear
 WHOAMI=`whoami`
+USERGIT=""
+PASSGIT=""
+SIZE=""
 SU="root"
 if [ "$WHOAMI" = "$SU" ]; then
     echo "deb http://ftp.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
     echo "deb http://ftp.ubuntu.com/ubuntu wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
     echo "deb http://ftp.ubuntu.com/ubuntu wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
-    echo -n "Username per GIT?: "
-    read -s USERGIT
-    echo
-    echo -n "Password per GIT?: "
-    read -s PASSGIT
-    echo
-    echo -n "Misura della Cache sul disco?: "
-    read SIZE
     apt-get update
     apt-get -y -f dist-upgrade
     export DEBIAN_FRONTEND=noninteractive
@@ -62,7 +57,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-tools/fixtures/squid.conf
     mkdir /var/cache/squid
-    chown proxy:proxy /var/cache/squid -R
+    chown proxy:proxy /var/cache/squid/ -R
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid/
     mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid/
     mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid/log_db_daemon
@@ -188,7 +183,6 @@ EOF
     sleep 1
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
     sed -i 's/80/8088/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
-    rm -rfv /usr/local/src/django-suit
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
@@ -238,8 +232,6 @@ EOF
     adduser support www-data
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
-    rm -rfv /usr/local/src/aron-tools/
-    rm -fv /usr/local/src/aron-web/fixtures/init.sql
     /usr/sbin/squid -z &
     while true;
       do
@@ -250,6 +242,9 @@ EOF
             echo "Cache directory Done!";
             echo "Rebooting system in 3 seconds";
             sleep 3;
+            rm -fv /usr/local/src/aron-web/fixtures/init.sql
+            rm -rfv /usr/local/src/django-suit
+            rm -rfv /usr/local/src/aron-tools/
             reboot;
         fi
     done

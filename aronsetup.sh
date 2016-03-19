@@ -37,8 +37,11 @@ if [ "$WHOAMI" = "$SU" ]; then
     cd /usr/local/src/aron-web
     git checkout aron-proxy
     mysql -u root -h localhost --password=$MYSQLPASS -e "CREATE DATABASE aron;"
+    sleep 1
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';"
+    sleep 1
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;"
+    sleep 1
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
@@ -51,23 +54,37 @@ if [ "$WHOAMI" = "$SU" ]; then
     dpkg -i /usr/local/src/aron-tools/fixtures/squid-dbg_3.5.15-1_amd64.deb
     dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.5.15-1_amd64.deb
     /etc/init.d/squid stop
+    sleep 1
     rm -rfv /var/cache/squid/
+    sleep 1
     rm -f /etc/squid/squid.conf
+    sleep 1
     CACHESIZE=$(($SIZE * 1024))
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py
+    sleep 1
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-tools/fixtures/squid.conf
+    sleep 1
     mkdir /var/cache/squid
+    sleep 1
     chown proxy:proxy /var/cache/squid/ -R
+    sleep 1
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid/
+    sleep 1
     mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid/
+    sleep 1
     mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid/log_db_daemon
     chmod 755 /usr/lib/squid/log_db_daemon
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.pem /etc/squid/
+    sleep 1
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
+    sleep 1
     /usr/lib/squid/ssl_crtd -c -s /var/lib/ssl_db/
     chown proxy:proxy /var/lib/ssl_db/ -R
+    sleep 1
     rm -rfv /usr/share/squid/errors/Italian/*
+    sleep 1
     cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid/errors/Italian/
+    sleep 1
     eth0=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 1p`
     eth1=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 2p`
     eth2=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 3p`
@@ -169,8 +186,11 @@ subnet 192.168.70.0 netmask 255.255.255.0 {
 }
 EOF
     mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmp/
+    sleep 1
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
+    sleep 1
     sed -i 's/NO/YES/g' /etc/default/firehol
+    sleep 1
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
     sleep 1
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
@@ -191,7 +211,9 @@ EOF
     echo "192.168.60.1" >> /etc/squid/aron_server
     echo "192.168.70.1" >> /etc/squid/aron_server
     echo "aron" > /etc/hostname
+    sleep 1
     touch /etc/squid/black_domain
+    sleep 1
     touch /etc/squid/squid.conf.aron
     cat > /etc/rc.local << EOF
 #!/bin/sh -e
@@ -213,8 +235,11 @@ chmod 666 /etc/squid/black_domain
 exit 0
 EOF
     chmod +x /etc/rc.local
+    sleep 1
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
+    sleep 1
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
+    sleep 1
     egrep -v aron /etc/passwd > tmp
     mv tmp /etc/passwd
     egrep -v aron /etc/passwd- > tmp
@@ -227,11 +252,15 @@ EOF
     chmod 600 /etc/passwd-
     chmod 640 /etc/shadow
     chmod 600 /etc/shadow-
-    adduser support --quiet --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
+    sleep 1
+    sudo /usr/sbin/adduser support --quiet --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
+    sleep 1
     echo "support:support" | chpasswd
     adduser support www-data
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
+    sync
+    sleep 1
     /usr/sbin/squid -z &
     while true;
       do
@@ -243,7 +272,7 @@ EOF
             echo "Rebooting system in 3 seconds";
             sleep 3;
             rm -fv /usr/local/src/aron-web/fixtures/init.sql
-            rm -rfv /usr/local/src/django-suit
+            rm -rfv /usr/local/src/django-suit/
             rm -rfv /usr/local/src/aron-tools/
             reboot;
         fi

@@ -23,6 +23,10 @@ if [ "$WHOAMI" = "$SU" ]; then
     apt-get -y install mysql-server
     /usr/sbin/adduser support --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     cd /usr/local/src
+    rm -rfv /usr/local/src/aron-web/
+    echo "support:support" | chpasswd
+    adduser support www-data
+    sleep 1
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-web.git
     pip install singlemodeladmin
     pip install django-sizefield
@@ -42,10 +46,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';"
     sleep 1
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;"
-    sleep 1
-    rm -rfv /usr/local/src/aron-web/
-    echo "support:support" | chpasswd
-    adduser support www-data
     sleep 1
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/templates/admin/base.html

@@ -7,15 +7,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "deb http://ftp.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
     echo "deb http://ftp.ubuntu.com/ubuntu wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
     echo "deb http://ftp.ubuntu.com/ubuntu wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
-    echo -n "Indirizzo MAC (in formato 00:00:00:00:00:00) del PC di gestione?: "
-    read MAC
-    echo
-    while [[ ! "$MAC" =~ ^([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}$ ]]
-    do
-        clear
-        echo -n "L'indirizzo MAC e' sbagliato, inserici di nuovo: "
-        read MAC
-    done
     echo -n "Username per GIT?: "
     read -s USERGIT
     echo
@@ -26,9 +17,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     read SIZE
     apt-get update
     apt-get -y -f dist-upgrade
-    cd /usr/local/src
-    git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-tools.git
-    cd /usr/local/src/aron-tools
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin \
                        apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack \
@@ -52,7 +40,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     git clone https://github.com/darklow/django-suit
     cd /usr/local/src/django-suit
     python setup.py install
-    echo $MAC > /etc/firehol/mac_allow
     echo "www-data ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
     echo "support ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
     cd /usr/local/src/aron-web
@@ -74,6 +61,9 @@ if [ "$WHOAMI" = "$SU" ]; then
     /etc/init.d/squid stop
     rm -rfv /var/cache/squid/
     rm -f /etc/squid/squid.conf
+    CACHESIZE=$(($SIZE * 1024))
+    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py
+    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-tools/fixtures/squid.conf
     mkdir /var/cache/squid
     chown proxy:proxy /var/cache/squid -R
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid/
@@ -186,12 +176,10 @@ subnet 192.168.70.0 netmask 255.255.255.0 {
 	option routers 192.168.70.1;
 }
 EOF
-    mv /usr/local/src/aron-tools/fixtures/logfile-daemon_mysql.pl /usr/lib/squid/
     mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmpd/
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
-    sed -i "s/CHANGEMAC/$MAC/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
@@ -244,9 +232,8 @@ EOF
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     clear
-    CACHESIZE=$(($SIZE * 1024))
-    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py
-    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-tools/fixtures/squid.conf
+    userdel aron
+    rm -rfv /home/aron
     adduser support --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     echo "support:support" | chpasswd
     adduser support www-data

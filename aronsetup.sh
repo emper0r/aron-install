@@ -18,10 +18,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     apt-get update
     apt-get -y -f dist-upgrade
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin \
-                       apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack \
-                       ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader \
-                       libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd
+    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd
     MYSQLPASS=`pwgen -s 32 -n 1`
     echo
     ARONPASS=`pwgen -s 32 -n 1`
@@ -124,17 +121,17 @@ interface4 $eth0 ethernet
     ipv4 server "icmp ssh" accept
     ipv4 client all accept
 
-interface4 $eth1 lan src "\${LAN}"
+interface4 $eth1 lan-1 src "\${LAN}"
     policy accept
     ipv4 server all accept
     ipv4 client all accept
 
-interface4 $eth2 segretaria src "\${LAN}"
+interface4 $eth2 lan-2 src "\${LAN}"
     policy accept
     ipv4 server all accept
     ipv4 client all accept
 
-interface4 $eth3 discovery src "\${LAN}"
+interface4 $eth3 lan-3 src "\${LAN}"
     policy accept
     ipv4 server all accept
     ipv4 client all accept
@@ -176,7 +173,7 @@ subnet 192.168.70.0 netmask 255.255.255.0 {
 	option routers 192.168.70.1;
 }
 EOF
-    mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmpd/
+    mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmp/
     tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
@@ -189,7 +186,6 @@ EOF
     sleep 1
     sed -i "s/CHANGE_ETH3/$eth3/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
-    sed -i 's/#rocommunity public  localhost/rocommunity public  localhost/g' /etc/snmp/snmpd.conf
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
     sed -i 's/80/8088/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
     rm -rfv /usr/local/src/django-suit
@@ -203,43 +199,46 @@ EOF
     echo "aron" > /etc/hostname
     touch /etc/squid/black_domain
     touch /etc/squid/squid.conf.aron
-    echo "#!/bin/sh -e" > /etc/rc.local
-    echo "myisamchk -r /var/lib/mysql/aron/aron_logs" >> /etc/rc.local
-    echo "chmod 666 /etc/squid/squid.conf" >> /etc/rc.local
-    echo "chmod 666 /etc/squid/squid.conf.aron" >> /etc/rc.local
-    echo "chmod 666 /etc/firehol/mac_allow" >> /etc/rc.local
-    echo "chmod 666 /etc/firehol/firehol.conf" >> /etc/rc.local
-    echo "chmod 666 /etc/network/interfaces" >> /etc/rc.local
-    echo "chmod 666 /etc/squid/aron_server" >> /etc/rc.local
-    echo "chmod 666 /etc/resolv.conf" >> /etc/rc.local
-    echo "chmod 666 /run/resolvconf/resolv.conf" >> /etc/rc.local
-    echo "chmod 666 /var/log/squid/cache.log" >> /etc/rc.local
-    echo "chmod 666 /etc/dhcp/dhcpd.conf" >> /etc/rc.local
-    echo "chmod 666 /etc/hostname" >> /etc/rc.local
-    echo "chmod 666 /var/log/syslog" >> /etc/rc.local
-    echo "chmod 666 /etc/mrtg.cfg" >> /etc/rc.local
-    echo "chmod 666 /etc/squid/black_domain" >> /etc/rc.local
-    echo "sysctl -w net.core.rmem_max=8388608" >> /etc/rc.local
-    echo "sysctl -w net.core.wmem_max=8388608" >> /etc/rc.local
-    echo "sysctl -w net.core.rmem_default=65536" >> /etc/rc.local
-    echo "sysctl -w net.core.wmem_default=65536" >> /etc/rc.local
-    echo "sysctl -w net.ipv4.tcp_rmem='4096 87380 8388608'" >> /etc/rc.local
-    echo "sysctl -w net.ipv4.tcp_wmem='4096 65536 8388608'" >> /etc/rc.local
-    echo "sysctl -w net.ipv4.tcp_mem='8388608 8388608 8388608'" >> /etc/rc.local
-    echo "sysctl -w net.ipv4.route.flush=1" >> /etc/rc.local
-    echo "exit 0" >> /etc/rc.local
+    cat > /etc/rc.local << EOF
+#!/bin/sh -e
+myisamchk -r /var/lib/mysql/aron/aron_logs
+chmod 666 /etc/squid/squid.conf
+chmod 666 /etc/squid/squid.conf.aron
+chmod 666 /etc/firehol/mac_allow
+chmod 666 /etc/firehol/firehol.conf
+chmod 666 /etc/network/interfaces
+chmod 666 /etc/squid/aron_server
+chmod 666 /etc/resolv.conf
+chmod 666 /run/resolvconf/resolv.conf
+chmod 666 /var/log/squid/cache.log
+chmod 666 /etc/dhcp/dhcpd.conf
+chmod 666 /etc/hostname
+chmod 666 /var/log/syslog
+chmod 666 /etc/mrtg.cfg
+chmod 666 /etc/squid/black_domain
+exit 0
+EOF
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
-    clear
-    userdel aron
-    rm -rfv /home/aron
-    adduser support --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
+    egrep -v aron /etc/passwd > tmp
+    mv tmp /etc/passwd
+    egrep -v aron /etc/passwd- > tmp
+    mv tmp /etc/passwd-
+    egrep -v aron /etc/shadow > tmp
+    mv tmp /etc/passwd
+    egrep -v aron /etc/shadow- > tmp
+    mv tmp /etc/passwd-
+    chmod 640 /etc/passwd
+    chmod 600 /etc/passwd-
+    chmod 640 /etc/shadow
+    chmod 600 /etc/shadow-
+    adduser support --quiet --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     echo "support:support" | chpasswd
     adduser support www-data
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
-    rm -rfv /usr/local/src/aron-tools
+    rm -rfv /usr/local/src/aron-tools/
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
     /usr/sbin/squid -z &
     while true;

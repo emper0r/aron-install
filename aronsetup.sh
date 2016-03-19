@@ -55,8 +55,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.5.15-1_amd64.deb
     /etc/init.d/squid stop
     sleep 1
-    rm -rfv /var/cache/squid/
-    sleep 1
     rm -f /etc/squid/squid.conf
     sleep 1
     CACHESIZE=$(($SIZE * 1024))
@@ -78,9 +76,18 @@ if [ "$WHOAMI" = "$SU" ]; then
     sleep 1
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
     sleep 1
+    echo "192.168.50.1" > /etc/squid/aron_server
+    echo "192.168.60.1" >> /etc/squid/aron_server
+    echo "192.168.70.1" >> /etc/squid/aron_server
+    echo "aron" > /etc/hostname
+    sleep 1
+    touch /etc/squid/black_domain
+    sleep 1
+    touch /etc/squid/squid.conf.aron
     /usr/lib/squid/ssl_crtd -c -s /var/lib/ssl_db/
     chown proxy:proxy /var/lib/ssl_db/ -R
     sleep 1
+    sync
     rm -rfv /usr/share/squid/errors/Italian/*
     sleep 1
     cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid/errors/Italian/
@@ -207,14 +214,6 @@ EOF
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
     echo "192.168.50.1      aron" >> /etc/hosts
-    echo "192.168.50.1" > /etc/squid/aron_server
-    echo "192.168.60.1" >> /etc/squid/aron_server
-    echo "192.168.70.1" >> /etc/squid/aron_server
-    echo "aron" > /etc/hostname
-    sleep 1
-    touch /etc/squid/black_domain
-    sleep 1
-    touch /etc/squid/squid.conf.aron
     cat > /etc/rc.local << EOF
 #!/bin/sh -e
 myisamchk -r /var/lib/mysql/aron/aron_logs
@@ -253,7 +252,7 @@ EOF
     chmod 640 /etc/shadow
     chmod 600 /etc/shadow-
     sleep 1
-    sudo /usr/sbin/adduser support --quiet --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
+    /usr/sbin/adduser support --quiet --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     sleep 1
     echo "support:support" | chpasswd
     adduser support www-data

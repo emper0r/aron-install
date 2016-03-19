@@ -69,8 +69,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     sleep 1
     mkdir /var/cache/squid
     sleep 1
-    chown proxy:proxy /var/cache/squid/ -R
-    sleep 1
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid/
     sleep 1
     mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid/
@@ -90,9 +88,15 @@ if [ "$WHOAMI" = "$SU" ]; then
     sleep 1
     touch /etc/squid/squid.conf.aron
     /usr/lib/squid/ssl_crtd -c -s /var/lib/ssl_db/
-    chown proxy:proxy /var/lib/ssl_db/ -R
+    rm -fv /var/log/squid/access.log
+    rm -fv /var/log/squid/cache.log
+    touch /var/log/squid/access.log
+    touch /var/log/squid/cache.log
+    chown proxy.proxy /var/lib/ssl_db/ -R
+    chown proxy.proxy /var/cache/squid -R
+    chown proxy.proxy /var/log/squid/access.log
+    chown proxy.proxy /var/log/squid/cache.log
     sleep 1
-    sync
     rm -rfv /usr/share/squid/errors/Italian/*
     sleep 1
     cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid/errors/Italian/
@@ -199,7 +203,7 @@ subnet 192.168.70.0 netmask 255.255.255.0 {
 EOF
     mv /usr/local/src/aron-tools/fixtures/snmpd.conf /etc/snmp/
     sleep 1
-    tar zvfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
+    tar zfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sleep 1
     sed -i 's/NO/YES/g' /etc/default/firehol
     sleep 1
@@ -258,14 +262,7 @@ EOF
     chmod 600 /etc/shadow-
     sleep 1
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
-    echo "Making cache directory ... after finish the system will be rebooted"
-    sync
     sleep 1
-    rm -fv /var/log/squid/access.log /var/log/squid/cache.log
-    touch /var/log/squid/access.log
-    touch /var/log/squid/cache.log
-    chown proxy:proxy /var/log/squid/access.log
-    chown proxy:proxy /var/log/squid/cache.log
     sleep 1
     /usr/sbin/squid -z
     sleep 1

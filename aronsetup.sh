@@ -14,6 +14,12 @@ if [ "$WHOAMI" = "$SU" ]; then
     apt-get -y -f dist-upgrade
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd
+    pip install singlemodeladmin
+    pip install django-sizefield
+    pip install libnacl
+    pip install base58
+    pip install iptools
+    pip install pymysql
     MYSQLPASS=`pwgen -s 32 -n 1`
     echo
     ARONPASS=`pwgen -s 32 -n 1`
@@ -21,24 +27,28 @@ if [ "$WHOAMI" = "$SU" ]; then
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server
+    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3_1.0.1-3_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3-dev_1.0.1-3_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-common_3.5.15-1_all.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-cgi_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-purge_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squid-dbg_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.5.15-1_amd64.deb
+    /etc/init.d/squid stop
     /usr/sbin/adduser support --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
-    cd /usr/local/src
+    sleep 1
     rm -rfv /usr/local/src/aron-web/
     echo "support:support" | chpasswd
+    echo "aron:$ARONPASS" | chpasswd
     adduser support www-data
-    sleep 1
-    git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-web.git
-    pip install singlemodeladmin
-    pip install django-sizefield
-    pip install libnacl
-    pip install base58
-    pip install iptools
-    pip install pymysql
-    git clone https://github.com/darklow/django-suit
-    cd /usr/local/src/django-suit
-    python setup.py install
     echo "www-data ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
     echo "support ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+    sleep 1
+    git clone https://github.com/darklow/django-suit /tmp/django-suit
+    cd /tmp/django-suit
+    python setup.py install
+    git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-web.git /usr/local/src/aron-web
     cd /usr/local/src/aron-web
     git checkout aron-proxy
     mysql -u root -h localhost --password=$MYSQLPASS -e "CREATE DATABASE aron;"
@@ -50,52 +60,40 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/templates/admin/base.html
     mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
-    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3_1.0.1-3_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3-dev_1.0.1-3_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-common_3.5.15-1_all.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-cgi_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-purge_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-dbg_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.5.15-1_amd64.deb
-    /etc/init.d/squid stop
-    sleep 1
     rm -f /etc/squid/squid.conf
-    sleep 1
     CACHESIZE=$(($SIZE * 1024))
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py
-    sleep 1
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-tools/fixtures/squid.conf
-    sleep 1
-    mkdir /var/cache/squid
-    sleep 1
     mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid/
-    sleep 1
     mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid/
-    sleep 1
     mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid/log_db_daemon
     chmod 755 /usr/lib/squid/log_db_daemon
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.pem /etc/squid/
-    sleep 1
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
     sleep 1
     echo "192.168.50.1" > /etc/squid/aron_server
     echo "192.168.60.1" >> /etc/squid/aron_server
     echo "192.168.70.1" >> /etc/squid/aron_server
-    echo "aron" > /etc/hostname
+    echo "aron.proxy.local" > /etc/hostname
     sleep 1
     touch /etc/squid/black_domain
-    sleep 1
     touch /etc/squid/squid.conf.aron
+    sleep 1
     /usr/lib/squid/ssl_crtd -c -s /var/lib/ssl_db/
     rm -fv /var/log/squid/access.log
     rm -fv /var/log/squid/cache.log
     touch /var/log/squid/access.log
     touch /var/log/squid/cache.log
-    chown proxy.proxy /var/lib/ssl_db/ -R
+    touch /etc/firehol/mac_allow
+    chown proxy:proxy /var/lib/ssl_db/ -R
+    chown proxy:proxy /var/log/squid/access.log
+    chown proxy:proxy /var/log/squid/cache.log
+    chmod 666 /var/log/squid/cache.log
+    rm -rfv /var/cache/squid
+    mkdir -p /var/cache/squid
+    chown proxy:proxy /var/cache/squid
+    /usr/sbin/squid -z &
     chown proxy.proxy /var/cache/squid -R
-    chown proxy.proxy /var/log/squid/access.log
-    chown proxy.proxy /var/log/squid/cache.log
     sleep 1
     rm -rfv /usr/share/squid/errors/Italian/*
     sleep 1
@@ -243,35 +241,16 @@ chmod 666 /etc/squid/black_domain
 exit 0
 EOF
     chmod +x /etc/rc.local
-    sleep 1
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
-    sleep 1
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
-    sleep 1
-    egrep -v '^aron' /etc/passwd > tmp
-    mv tmp /etc/passwd
-    egrep -v '^aron' /etc/passwd- > tmp
-    mv tmp /etc/passwd-
-    egrep -v '^aron' /etc/shadow > tmp
-    mv tmp /etc/passwd
-    egrep -v '^aron' /etc/shadow- > tmp
-    mv tmp /etc/passwd-
-    chmod 640 /etc/passwd
-    chmod 600 /etc/passwd-
-    chmod 640 /etc/shadow
-    chmod 600 /etc/shadow-
-    sleep 1
-    chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
-    sleep 1
-    sleep 1
-    /usr/sbin/squid -z
-    sleep 1
+    chown -R support.support /usr/local/src/aron-web/web/npyscreen/
+    chown support.support /usr/local/src/aron-web/web/support.py
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
     rm -rfv /usr/local/src/django-suit
     sleep 1
     rm -rfv /usr/local/src/aron-tools
-    sleep 30
+    sync
     reboot
 else
     echo "Errore: Devi essere root prima per eseguire questo script"

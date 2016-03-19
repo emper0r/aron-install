@@ -21,6 +21,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQLPASS"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQLPASS"
     apt-get -y install mysql-server
+    /usr/sbin/adduser support --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
     cd /usr/local/src
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-web.git
     pip install singlemodeladmin
@@ -41,6 +42,10 @@ if [ "$WHOAMI" = "$SU" ]; then
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';"
     sleep 1
     mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;"
+    sleep 1
+    rm -rfv /usr/local/src/aron-web/
+    echo "support:support" | chpasswd
+    adduser support www-data
     sleep 1
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/templates/admin/base.html
@@ -239,43 +244,38 @@ EOF
     sleep 1
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     sleep 1
-    egrep -v aron /etc/passwd > tmp
+    egrep -v '^aron' /etc/passwd > tmp
     mv tmp /etc/passwd
-    egrep -v aron /etc/passwd- > tmp
+    egrep -v '^aron' /etc/passwd- > tmp
     mv tmp /etc/passwd-
-    egrep -v aron /etc/shadow > tmp
+    egrep -v '^aron' /etc/shadow > tmp
     mv tmp /etc/passwd
-    egrep -v aron /etc/shadow- > tmp
+    egrep -v '^aron' /etc/shadow- > tmp
     mv tmp /etc/passwd-
     chmod 640 /etc/passwd
     chmod 600 /etc/passwd-
     chmod 640 /etc/shadow
     chmod 600 /etc/shadow-
     sleep 1
-    /usr/sbin/adduser support --quiet --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
-    sleep 1
-    echo "support:support" | chpasswd
-    adduser support www-data
     chown -R support:support /usr/local/src/aron-web/web/npyscreen/ /usr/local/src/aron-web/web/support.py
     echo "Making cache directory ... after finish the system will be rebooted"
     sync
     sleep 1
-    /usr/sbin/squid -z &
-    while true;
-      do
-        COUNT=`ls -lh /var/cache/squid | wc -l`
-        if [ $COUNT -eq 257 ];
-          then
-            clear;
-            echo "Cache directory Done!";
-            echo "Rebooting system in 3 seconds";
-            sleep 3;
-            rm -fv /usr/local/src/aron-web/fixtures/init.sql
-            rm -rfv /usr/local/src/django-suit/
-            rm -rfv /usr/local/src/aron-tools/
-            reboot;
-        fi
-    done
+    rm -fv /var/log/squid/access.log /var/log/squid/cache.log
+    touch /var/log/squid/access.log
+    touch /var/log/squid/cache.log
+    chown proxy:proxy /var/log/squid/access.log
+    chown proxy:proxy /var/log/squid/cache.log
+    sleep 1
+    /usr/sbin/squid -z
+    sleep 1
+    rm -fv /usr/local/src/aron-web/fixtures/init.sql
+    sleep 1
+    rm -rfv /usr/local/src/django-suit
+    sleep 1
+    rm -rfv /usr/local/src/aron-tools
+    sleep 30
+    reboot
 else
     echo "Errore: Devi essere root prima per eseguire questo script"
 fi

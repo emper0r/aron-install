@@ -1,53 +1,52 @@
-^http?s\:\/\/download\.oracle\.com\/((otn\-pub|otn)\/[\d\w]+\/[\d\w]+\/[\w\d\-]+\/[\w\d\-]+\.(exe|dmg|rpm|msi|tar\.(gz|Z)))\?                   http://java.aron.squid.internal/$1
-^http?s\:\/\/([\d\w\-]+)\.oracle\.com\/(([\d\w]+)\/[\d\w]+\/[\d\w]+\/([\d\w\-]+)\/([\d\w]+\/)?[\d\w\-\.\_]+\.(dmg|msi|exe|tar\.gz|tar\.Z))\?                    http://java.aron.squid.internal/$1
+^http?s:\/\/download\.oracle\.com\/((otn\-pub|otn)\/[\d\w]+\/[\d\w]+\/[\w\d\-]+\/[\w\d\-]+\.(exe|dmg|rpm|msi|tar\.(gz|Z)))\?    http://java.aron.squid.internal/$1
+^http?s:\/\/([\d\w\-]+)\.oracle\.com\/(([\d\w]+)\/[\d\w]+\/[\d\w]+\/([\d\w\-]+)\/([\d\w]+\/)?[\d\w\-\.\_]+\.(dmg|msi|exe|tar\.gz|tar\.Z))\? http://java.aron.squid.internal/$1
 
-^http?s:\/\/[^\.]+\.phobos\.apple\.com\/(.*)	http://apple.aron.squid.internal/$1
+^http?s:\/\/[^\.]+\.phobos\.apple\.com\/(.*)    http://apple.aron.squid.internal/$1
 
-^http?s:\/\/[^\.]+\.c\.android\.clients\.google\.com\/(.*)	http://android.aron.squid.internal/$1
+^http?s:\/\/[^\.]+\.c\.android\.clients\.google\.com\/(.*)  http://android.aron.squid.internal/$1
 
-^http?s:\/\/(youtube|ytimg|vimeo|googlevideo|[a-zA-Z0-9\-]+)\.com/.*	http://yt.aron.squid.internal/$1
-(get_video\?|videoplayback\?|videodownload\?|\.flv\?|\.fid\?)	http://yt.aron.squid.internal/$1
+^http?s:\/\/(youtube|ytimg|vimeo|googlevideo|[a-zA-Z0-9\-]+)\.com/.*    http://yt.aron.squid.internal/$1
+(get_video\?|videoplayback\?|videodownload\?|\.flv\?|\.fid\?)   http://yt.aron.squid.internal/$1
 
-^http?s:\/\/[^\.]+\.facebook\.com\/* 	http://fb.aron.squid.internal/$1
-^http?s:\/\/profile.ak.fbcdn.net\/hprofile-ak-[a-z]{3}[0-9]\/	http://fb.aron.squid.internal/$1
-^http?s:\/\/.*?([a-z]{4,}).*?.ak.fbcdn.net\/	http://fb.aron.squid.internal/$1
-^http?s:\/\/.+?\.fbcdn-(s?photos|profile)-[a-z]-a.akamaihd.net/h(profile|s?photos)	http://fb.aron.squid.internal/$1
-^http?s:\/\/.+?\.fbcdn-(profile|dragon)-[a-z]\.akamaihd.net/h(profile|photos)	http://fb.aron.squid.internal/$1
+^http?s:\/\/[^\.]+\.facebook\.com\/*    http://fb.aron.squid.internal/$1
+^http?s:\/\/profile.ak.fbcdn.net\/hprofile-ak-[a-z]{3}[0-9]\/   http://fb.aron.squid.internal/$1
+^http?s:\/\/.*?([a-z]{4,}).*?.ak.fbcdn.net\/    http://fb.aron.squid.internal/$1
+^http?s:\/\/.+?\.fbcdn-(s?photos|profile)-[a-z]-a.akamaihd.net/h(profile|s?photos)  http://fb.aron.squid.internal/$1
+^http?s:\/\/.+?\.fbcdn-(profile|dragon)-[a-z]\.akamaihd.net/h(profile|photos)   http://fb.aron.squid.internal/$1
 
-speedtest\.net\/.*\.(txt|jpg|png|swf)$	http://speedtest.aron.squid.internal/$1
+speedtest\.net\/.*\.(txt|jpg|png|swf)$  http://speedtest.aron.squid.internal/$1
 
-.pixieimage\.com.*\.(jp(e?g|e|2)|gif|png|tiff?|bmp|swf|mp(4|3))$	http://images.aron.squid.internal/$1
-(photobucket|pbsrc|flickr|yimg|ytimg|twimg|gravatar)\.com.*\.(jp(e?g|e|2)|gif|png|tiff?|bmp|swf|mp(4|3)) 	http://images.aron.squid.internal/$1
-.(akamaihd|edgecastcdn|spilcdn|zgncdn|(tw|y|yt)img)\.com.*\.(jp(e?g|e|2)|gif|png|swf|mp(3|4))	http://images.aron.squid.internal/$1
+.pixieimage\.com.*\.(jp(e?g|e|2)|gif|png|tiff?|bmp|swf|mp(4|3))$    http://images.aron.squid.internal/$1
+(photobucket|pbsrc|flickr|yimg|ytimg|twimg|gravatar)\.com.*\.(jp(e?g|e|2)|gif|png|tiff?|bmp|swf|mp(4|3))    http://images.aron.squid.internal/$1
+.(akamaihd|edgecastcdn|spilcdn|zgncdn|(tw|y|yt)img)\.com.*\.(jp(e?g|e|2)|gif|png|swf|mp(3|4))   http://images.aron.squid.internal/$1
 
-.blogspot\.com.*\.(jp(e?g|e|2)|gif|png|tiff?|bmp|swf|mp(4|3))$	http://blogs.aron.squid.internal/$1
+.blogspot\.com.*\.(jp(e?g|e|2)|gif|png|tiff?|bmp|swf|mp(4|3))$  http://blogs.aron.squid.internal/$1
 
 
-.(aac|mka|ape|midi?|flac|wav|nzp|swf|fid|avi|mov|wma|mp(4|3)|rm|ram|m4v|webm|og(g|a))$	http://audio.aron.squid.internal/$1
+.(aac|mka|ape|midi?|flac|wav|nzp|swf|fid|avi|mov|wma|mp(4|3)|rm|ram|m4v|webm|og(g|a))$  http://audio.aron.squid.internal/$1
 
-vid\.akm\.dailymotion\.com.*\.on2\? 	http://video.aron.squid.internal/$1
-galleries\.video(\?|sz) 	http://video.aron.squid.internal/$1
-.(3gp|ac4|agx|au|avi|axd|asx|bmp|cbr|cbt|cbz|dat|divx|flv|hqx|mid|mk(a|v)|mdv|on2|mov|mp(1|2|3|4|e|eg|g)|og(a|g|v)|qt|ra|ram|rm|swf|tif|tiff|wa(v|x)|wm(a|v|x)|x-flv)$  	http://video.aron.squid.internal/$1
-.akamaihd\.net.*\.(swf|mp(4|3))	http://video.aron.squid.internal/$1
+vid\.akm\.dailymotion\.com.*\.on2\? http://video.aron.squid.internal/$1
+galleries\.video(\?|sz) http://video.aron.squid.internal/$1
+.(3gp|ac4|agx|au|avi|axd|asx|bmp|cbr|cbt|cbz|dat|divx|flv|hqx|mid|mk(a|v)|mdv|on2|mov|mp(1|2|3|4|e|eg|g)|og(a|g|v)|qt|ra|ram|rm|swf|tif|tiff|wa(v|x)|wm(a|v|x)|x-flv)$  http://video.aron.squid.internal/$1
+.akamaihd\.net.*\.(swf|mp(4|3)) http://video.aron.squid.internal/$1
 
-.(class|doc|docx|pdf|pps|ppt|ppsx|pptx|psd|rtx|rtf|txt|wpl|xls|xlsx)$ 	http://office.aron.squid.internal/$1
+.(class|doc|docx|pdf|pps|ppt|ppsx|pptx|psd|rtx|rtf|txt|wpl|xls|xlsx)$   http://office.aron.squid.internal/$1
 
-^.(streamate.doublepimp.com.*\.js\?|utm\.gif|ads\?|rmxads\.com|ad\.z5x\.net|bh\.contextweb\.com|bstats\.adbrite\.com|a1\.interclick\.com|ad\.trafficmp\.com|ads\.cubics\.com|ad\.xtendmedia\.com|\.googlesyndication\.com|advertising\.com|yieldmanager|game-advertising\.com|pixel\.quantserve\.com|adperium\.com|doubleclick\.net|adserving\.cpxinteractive\.com|syndication\.com|media.fastclick.net).*	http://ads.aron.squid.internal/$1
+^.(streamate.doublepimp.com.*\.js\?|utm\.gif|ads\?|rmxads\.com|ad\.z5x\.net|bh\.contextweb\.com|bstats\.adbrite\.com|a1\.interclick\.com|ad\.trafficmp\.com|ads\.cubics\.com|ad\.xtendmedia\.com|\.googlesyndication\.com|advertising\.com|yieldmanager|game-advertising\.com|pixel\.quantserve\.com|adperium\.com|doubleclick\.net|adserving\.cpxinteractive\.com|syndication\.com|media.fastclick.net).*  http://ads.aron.squid.internal/$1
 
-(autoup.exe|main.exe|xtrap.xt|autoupgrade.exe|update.exe|grandchase.exe|FSLauncher.exe|FreeStyle_Setup.exe|grandchase.exe|filelist.zip)$	http://av-upd.aron.squid.internal/$1
-(UpdaterModifier.exe|FreeStyle.exe|PBLauncher.exe|update.exe|NewLauncher.exe|NewAvalon.exe|hon.exe.zip|cabal.exe)$	http://av-upd.updates.aron.squid.internal/$1
-(PointBlank.exe.zip|HSUpdate.exe.zip|PBConfig.exe.zip)	http://av-upd.aron.squid.internal/$1
-(wks_avira-win32-en-pecl.info.gz|wks_avira10-win32-en-pecl.info.gz|servers.def.vpx)$	http://av-upd.aron.squid.internal/$1
-(setup.exe.gz|avscan.exe.gz|avguard.exe.gz|filelist.zip|AvaClient.exe)	http://av-upd.aron.squid.internal/$1
-(autoup|main|autoupgrade)\.exe$	http://av-upd.aron.squid.internal/$1
-(update.ini|Update.ini|version.list|Version.list|update.1st|update.exe|autoup.exe)$	http://av-upd.aron.squid.internal/$1
+(autoup.exe|main.exe|xtrap.xt|autoupgrade.exe|update.exe|grandchase.exe|FSLauncher.exe|FreeStyle_Setup.exe|grandchase.exe|filelist.zip)$    http://av-upd.aron.squid.internal/$1
+(UpdaterModifier.exe|FreeStyle.exe|PBLauncher.exe|update.exe|NewLauncher.exe|NewAvalon.exe|hon.exe.zip|cabal.exe)$  http://av-upd.updates.aron.squid.internal/$1
+(PointBlank.exe.zip|HSUpdate.exe.zip|PBConfig.exe.zip)  http://av-upd.aron.squid.internal/$1
+(wks_avira-win32-en-pecl.info.gz|wks_avira10-win32-en-pecl.info.gz|servers.def.vpx)$    http://av-upd.aron.squid.internal/$1
+(setup.exe.gz|avscan.exe.gz|avguard.exe.gz|filelist.zip|AvaClient.exe)  http://av-upd.aron.squid.internal/$1
+(autoup|main|autoupgrade)\.exe$ http://av-upd.aron.squid.internal/$1
+(update.ini|Update.ini|version.list|Version.list|update.1st|update.exe|autoup.exe)$ http://av-upd.aron.squid.internal/$1
 
-(avgate|avira)\.(idx|gz)$ http://av-data.aron.squid.internal/$1
-kaspersky\.avc$   http://av-data.aron.squid.internal/$1
-update.nai.com\/*.(gem|zip|mcs)$    http://av-data.aron.squid.internal/$1
-^http:\/\/liveupdate\.symantecliveupdate\.com\/(*.(zip|m26))$  http://av-data.aron.squid.internal/$1
+^http:\/\/([\d\w\-]+)\.symantecliveupdate\.com\/*.(zip|m26)$    http://av-data.aron.squid.internal/$1
+^http:\/\/([\d\w\-]+)\.symantecliveupdate\.com/[a-zA-Z0-9]+\.(zip|7z|m26)$  http://av-data.aron.squid.internal/$1
+^http:\/\/([\d\w\-]+)\.avg\.com\/([\d\w\-]+)\/([\d\w\-]+)\/update\/([\d\w\-]+)\.bin$    http://av-data.aron.squid.internal/$1
 
-((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2}).*\.(z|png|aup|cer|vpu|vpk|kom|woff|pak|mst|upd|pkg|7z|swz|dsft|xpi|arj|idx|psf|bin|bz2|cab|dll|exe|gz|inc|iso|jar|lha|dmg|ms(i|p|u)|rpm|tar|tgz|rtp|rpz|nui|kom|stg|pak|sup|nzp|npz|iop|z(ip|[0-9]{2})|r(ar|[0-9]{2}))$ 	http://files.aron.squid.internal/$1
-.(z|png|aup|cer|vpu|vpk|kom|woff|pak|mst|upd|pkg|7z|swz|dsft|xpi|arj|idx|psf|bin|bz2|cab|dll|exe|gz|inc|iso|jar|lha|dmg|ms(i|p|u)|rpm|tar|tgz|rtp|rpz|nui|kom|stg|pak|sup|nzp|npz|iop|z(ip|[0-9]{2})|r(ar|[0-9]{2}))$ 	http://files.aron.squid.internal/$1
+((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2}).*\.(z|png|aup|cer|vpu|vpk|kom|woff|pak|mst|upd|pkg|7z|swz|dsft|xpi|arj|idx|psf|bin|bz2|cab|dll|exe|gz|inc|iso|jar|lha|dmg|ms(i|p|u)|rpm|tar|tgz|rtp|rpz|nui|kom|stg|pak|sup|nzp|npz|iop|z(ip|[0-9]{2})|r(ar|[0-9]{2}))$ http://files.aron.squid.internal/$1
+\.(z|png|aup|cer|vpu|vpk|kom|woff|pak|mst|upd|pkg|7z|swz|dsft|xpi|arj|idx|psf|bin|bz2|cab|dll|exe|gz|inc|iso|jar|lha|dmg|ms(i|p|u)|rpm|tar|tgz|rtp|rpz|nui|kom|stg|pak|sup|nzp|npz|iop|z(ip|[0-9]{2})|r(ar|[0-9]{2}))$  http://files.aron.squid.internal/$1
 
 .(sc-|dl-|ex-|mh-|dll|da-)$ http://windows-dll.aron.squid.internal/$1

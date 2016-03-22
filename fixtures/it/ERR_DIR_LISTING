@@ -76,7 +76,7 @@
     ERRORE
   </h2>
 
-  <h1>Contenuto della directory:</h1>
+  <h3>Contenuto della directory:</h3>
 
 <blockquote id="data">
 <pre id="dirmsg"></pre>

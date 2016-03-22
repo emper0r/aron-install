@@ -22,7 +22,6 @@ speedtest\.net\/.*\.(txt|jpg|png|swf)$  http://speedtest.aron.squid.internal/$1
 
 .blogspot\.com.*\.(jp(e?g|e|2)|gif|png|tiff?|bmp|swf|mp(4|3))$  http://blogs.aron.squid.internal/$1
 
-
 .(aac|mka|ape|midi?|flac|wav|nzp|swf|fid|avi|mov|wma|mp(4|3)|rm|ram|m4v|webm|og(g|a))$  http://audio.aron.squid.internal/$1
 
 vid\.akm\.dailymotion\.com.*\.on2\? http://video.aron.squid.internal/$1

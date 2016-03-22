@@ -76,7 +76,7 @@
     ERRORE
   </h2>
 
-  <h1>L'accesso al cache manager è negato.</h1>
+  <h3>L'accesso al cache manager è negato.</h3>
 
 <div id="content">
 <p>Mentre si cercava di accedere alla URL <a href="%U">%U</a> si è presentato il seguente errore:</p>

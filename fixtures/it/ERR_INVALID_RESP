@@ -76,7 +76,7 @@
     ERRORE
   </h2>
 
-  <h1>Non è stato possibile accedere alla URL richiesta.</h1>
+  <h3>Non è stato possibile accedere alla URL richiesta.</h3>
 
 <div id="content">
 <p><b>Risposta non valida</b>. Si è verificato un errore durante l'elaborazione della richiesta:</p>

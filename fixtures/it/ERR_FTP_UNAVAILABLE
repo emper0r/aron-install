@@ -76,7 +76,7 @@
     ERRORE
   </h2>
 
-  <h1>Non è stato possibile accedere alla URL richiesta.</h1>
+  <h3>Non è stato possibile accedere alla URL richiesta.</h3>
 
     <div id="content">
 <p>Il server FTP era sovraccarico e non ha consentito di accedere alla URL: <a href="%U">%U</a>.</p>

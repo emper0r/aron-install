@@ -76,7 +76,7 @@
     ERRORE
   </h2>
 
-  <h1>Non è stato possibile accedere alla URL richiesta.</h1>
+  <h3>Non è stato possibile accedere alla URL richiesta.</h3>
 
 <div id="content">
 <p>Le credenziali fornite per l'accesso al server FTP relativo alla URL <a href="%U">%U</a> sono invalide</p>

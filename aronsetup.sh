@@ -2,6 +2,7 @@
 
 clear
 WHOAMI=`whoami`
+HOSTNAME=`hostname`
 USERGIT=""
 PASSGIT=""
 SIZE=""
@@ -77,7 +78,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "192.168.50.1" > /etc/squid/aron_server
     echo "192.168.60.1" >> /etc/squid/aron_server
     echo "192.168.70.1" >> /etc/squid/aron_server
-    echo "aron.proxy.local" > /etc/hostname
+    echo "$HOSTNAME" > /etc/hostname
     sleep 1
     touch /etc/squid/black_domain
     touch /etc/squid/squid.conf.aron
@@ -218,11 +219,14 @@ EOF
     sed -i "s/CHANGE_ETH3/$eth3/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
-    sed -i 's/80/8088/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
+    sed -i 's/80/8088/g' /etc/apache2/ports.conf
+    sed -i 's/80/8088/g' /etc/apache2/sites-available/000-default.conf
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
-    echo "192.168.50.1      aron" >> /etc/hosts
+    echo "192.168.50.1      $HOSTNAME" >> /etc/hosts
+    echo "192.168.60.1      $HOSTNAME" >> /etc/hosts
+    echo "192.168.70.1      $HOSTNAME" >> /etc/hosts
     cat > /etc/rc.local << EOF
 #!/bin/sh -e
 myisamchk -r /var/lib/mysql/aron/aron_logs
@@ -239,6 +243,7 @@ chmod 666 /etc/dhcp/dhcpd.conf
 chmod 666 /etc/hostname
 chmod 666 /var/log/syslog
 chmod 666 /etc/squid/black_domain
+/usr/sbin/netdata
 exit 0
 EOF
     chmod +x /etc/rc.local

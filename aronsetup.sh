@@ -59,7 +59,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     sleep 1
     mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/config.py
     mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.18-py2.7.egg/suit/templates/admin/base.html
-    mv /usr/local/src/aron-tools/fixtures/aron.conf /               etc/apache2/sites-available/000-default.conf
+    mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
     rm -f /etc/squid/squid.conf
     CACHESIZE=$(($SIZE * 1024))
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py

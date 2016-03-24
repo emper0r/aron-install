@@ -219,8 +219,9 @@ EOF
     sed -i "s/CHANGE_ETH3/$eth3/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
-    sed -i 's/80/8088/g' /etc/apache2/ports.conf
-    sed -i 's/80/8088/g' /etc/apache2/sites-available/000-default.conf
+    sed -i "s/80/8088/g" /etc/apache2/ports.conf
+    sed -i "s/80/8088/g" /etc/apache2/sites-available/000-default.conf
+    sed -i "s/APACHE_NAME/$HOSTNAME/g" /etc/apache2/sites-available/000-default.conf
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts

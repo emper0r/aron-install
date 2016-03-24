@@ -14,7 +14,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     apt-get update
     apt-get -y -f dist-upgrade
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt zlib1g-dev gcc make autoconf autogen automake pkg-config
+    apt-get -y install apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd snmp-mibs-downloader
     pip install singlemodeladmin
     pip install django-sizefield
     pip install libnacl
@@ -72,9 +72,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.pem /etc/squid/
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
     sleep 1
-    git clone https://github.com/firehol/netdata.git /usr/local/src/netdata
-    cd /usr/local/src/netdata/
-    ./netdata-installer.sh
     echo "192.168.50.1" > /etc/squid/aron_server
     echo "192.168.60.1" >> /etc/squid/aron_server
     echo "192.168.70.1" >> /etc/squid/aron_server
@@ -204,6 +201,7 @@ subnet 192.168.70.0 netmask 255.255.255.0 {
 }
 EOF
     sleep 1
+    sed -i 's/#rocommunity public  localhost/rocommunity public  localhost/g' /etc/snmp/snmpd.conf
     tar zfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sleep 1
     sed -i 's/NO/YES/g' /etc/default/firehol
@@ -244,13 +242,17 @@ chmod 666 /etc/dhcp/dhcpd.conf
 chmod 666 /etc/hostname
 chmod 666 /var/log/syslog
 chmod 666 /etc/squid/black_domain
-/usr/sbin/netdata
+chmod 666 /etc/mrtg.cfg
+env LANG=C /usr/bin/mrtg
 exit 0
 EOF
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
+    chown www-data:www-data /usr/local/src/aron-web/ -R
+    sleep 1
     chown -R support.support /usr/local/src/aron-web/web/npyscreen/
+    sleep 1
     chown support.support /usr/local/src/aron-web/web/support.py
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
     sleep 1

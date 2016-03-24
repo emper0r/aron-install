@@ -14,7 +14,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     apt-get update
     apt-get -y -f dist-upgrade
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt zlib1g-dev gcc make autoconf autogen automake pkg-config
+    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt zlib1g-dev gcc make autoconf autogen automake pkg-config
     pip install singlemodeladmin
     pip install django-sizefield
     pip install libnacl
@@ -221,7 +221,7 @@ EOF
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
     sed -i "s/80/8088/g" /etc/apache2/ports.conf
     sed -i "s/80/8088/g" /etc/apache2/sites-available/000-default.conf
-    sed -i "s/APACHE_NAME/$HOSTNAME/g" /etc/apache2/sites-available/000-default.conf
+    sed -i "s/APACHE_HOSTNAME/$HOSTNAME/g" /etc/apache2/sites-available/000-default.conf
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts

@@ -6,6 +6,9 @@ HOSTNAME=`hostname`
 USERGIT=""
 PASSGIT=""
 SIZE=""
+CHANGE_EMAIL_HOST = ''
+CHANGE_EMAIL_HOST_USER = ''
+CHANGE_EMAIL_HOST_PASSWORD = ''
 SU="root"
 if [ "$WHOAMI" = "$SU" ]; then
     echo "deb http://ftp.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
@@ -207,6 +210,9 @@ EOF
     sed -i 's/NO/YES/g' /etc/default/firehol
     sleep 1
     sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/CHANGE_EMAIL_HOST/$CHANGE_EMAIL_HOST/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/CHANGE_EMAIL_HOST_USER/$CHANGE_EMAIL_HOST_USER/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/CHANGE_EMAIL_HOST_PASSWORD/$CHANGE_EMAIL_HOST_PASSWORD/g" /usr/local/src/aron-web/web/settings.py
     sleep 1
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1

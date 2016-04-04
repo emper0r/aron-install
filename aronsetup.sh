@@ -6,9 +6,9 @@ HOSTNAME=`hostname`
 USERGIT=""
 PASSGIT=""
 SIZE=""
-CHANGE_EMAIL_HOST = ''
-CHANGE_EMAIL_HOST_USER = ''
-CHANGE_EMAIL_HOST_PASSWORD = ''
+HOSTMAIL="mail1.ctime.it"
+EMAILUSER="logmail@chtfirma.it"
+EPASSWORD="logmail1234"
 SU="root"
 if [ "$WHOAMI" = "$SU" ]; then
     echo "deb http://ftp.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
@@ -107,6 +107,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     eth1=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 2p`
     eth2=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 3p`
     eth3=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 4p`
+    ipeth0=`ifconfig $eth0 | egrep -i "inet:" | cut -d: -f 2 | awk '{print $1}'`
     cat > /etc/network/interfaces << EOF
 auto lo $eth0 $eth1 $eth2 $eth3
 iface lo inet loopback
@@ -181,7 +182,7 @@ EOF
     cat > /etc/dhcp/dhcpd.conf << EOF
 ddns-update-style none;
 authoritative;
-option domain-name "aron.local";
+option domain-name "$HOSTNAME";
 option domain-name-servers 8.8.8.8, 8.8.4.4;
 default-lease-time 7200;
 max-lease-time 7200;
@@ -203,23 +204,48 @@ subnet 192.168.70.0 netmask 255.255.255.0 {
 	option routers 192.168.70.1;
 }
 EOF
+    cat > /etc/mrtg.cfg << EOF
+LoadMIBs: /usr/share/snmp/mibs/UCD-SNMP-MIB.txt
+RunAsDaemon: Yes
+Interval: 5
+WorkDir: /usr/local/src/aron-web/static/dashboard/
+Options[_]: growright, bits
+EnableIPv6: no
+
+Target[localhost_$eth0]: #$eth0:public@localhost:
+SetEnv[localhost_$eth0]: MRTG_INT_IP="$ipeth0" MRTG_INT_DESCR="No-Description"
+MaxBytes[localhost_$eth0]: 125000000
+Title[localhost_$eth0]: Traffic Analysis for $eth0 -- $HOSTNAME
+
+Target[localhost_$eth1]: #$eth1:public@localhost:
+SetEnv[localhost_$eth1]: MRTG_INT_IP="192.168.50.1" MRTG_INT_DESCR="No-Description"
+MaxBytes[localhost_$eth1]: 125000000
+Title[localhost_$eth1]: Traffic Analysis for $eth1 -- $HOSTNAME
+
+Target[localhost_$eth2]: #$eth2:public@localhost:
+SetEnv[localhost_$eth2]: MRTG_INT_IP="192.168.60.1" MRTG_INT_DESCR="No-Description"
+MaxBytes[localhost_$eth2]: 125000000
+Title[localhost_$eth2]: Traffic Analysis for $eth2 -- $HOSTNAME
+
+Target[localhost_$eth3]: #$eth3:public@localhost:
+SetEnv[localhost_$eth3]: MRTG_INT_IP="192.168.70.1" MRTG_INT_DESCR="No-Description"
+MaxBytes[localhost_$eth3]: 125000000
+Title[localhost_$eth3]: Traffic Analysis for $eth3 -- $HOSTNAME
+EOF
     sleep 1
     sed -i 's/#rocommunity public  localhost/rocommunity public  localhost/g' /etc/snmp/snmpd.conf
     tar zfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
     sleep 1
     sed -i 's/NO/YES/g' /etc/default/firehol
     sleep 1
-    sed -i "s/CHANGE/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
-    sed -i "s/CHANGE_EMAIL_HOST/$CHANGE_EMAIL_HOST/g" /usr/local/src/aron-web/web/settings.py
-    sed -i "s/CHANGE_EMAIL_HOST_USER/$CHANGE_EMAIL_HOST_USER/g" /usr/local/src/aron-web/web/settings.py
-    sed -i "s/CHANGE_EMAIL_HOST_PASSWORD/$CHANGE_EMAIL_HOST_PASSWORD/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/ARONPWD/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/HOSTMAIL/$HOSTMAIL/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/EMAILUSER/$EMAILUSER/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/EPASSWORD/$EPASSWORD/g" /usr/local/src/aron-web/web/settings.py
     sleep 1
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
-    sleep 1
     sed -i "s/CHANGE_ETH1/$eth1/g" /usr/local/src/aron-web/fixtures/init.sql
-    sleep 1
     sed -i "s/CHANGE_ETH2/$eth2/g" /usr/local/src/aron-web/fixtures/init.sql
-    sleep 1
     sed -i "s/CHANGE_ETH3/$eth3/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
@@ -234,7 +260,6 @@ EOF
     echo "192.168.70.1      $HOSTNAME" >> /etc/hosts
     cat > /etc/rc.local << EOF
 #!/bin/sh -e
-myisamchk -r /var/lib/mysql/aron/aron_logs
 chmod 666 /etc/squid/squid.conf
 chmod 666 /etc/squid/squid.conf.aron
 chmod 666 /etc/firehol/mac_allow
@@ -250,21 +275,20 @@ chmod 666 /var/log/syslog
 chmod 666 /etc/squid/black_domain
 chmod 666 /etc/mrtg.cfg
 env LANG=C /usr/bin/mrtg
+myisamchk -r /var/lib/mysql/aron/aron_logs
+rm -f /etc/squid/squid.conf
 exit 0
 EOF
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     chown www-data:www-data /usr/local/src/aron-web/ -R
-    sleep 1
     chown -R support.support /usr/local/src/aron-web/web/npyscreen/
-    sleep 1
     chown support.support /usr/local/src/aron-web/web/support.py
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
-    sleep 1
-    rm -rfv /usr/local/src/django-suit
-    sleep 1
+    rm -rfv /tmp/django-suit
     rm -rfv /usr/local/src/aron-tools
+    sleep 1
     sync
     reboot
 else

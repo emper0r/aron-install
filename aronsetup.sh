@@ -2,13 +2,12 @@
 
 clear
 WHOAMI=`whoami`
-HOSTNAME=`hostname`
 USERGIT=""
 PASSGIT=""
 SIZE=""
-HOSTMAIL="mail1.ctime.it"
-EMAILUSER="logmail@chtfirma.it"
-EPASSWORD="logmail1234"
+HOSTMAIL=""
+EMAILUSER=""
+EPASSWORD=""
 SU="root"
 if [ "$WHOAMI" = "$SU" ]; then
     echo "deb http://ftp.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
@@ -260,7 +259,6 @@ EOF
     echo "192.168.70.1      $HOSTNAME" >> /etc/hosts
     cat > /etc/rc.local << EOF
 #!/bin/sh -e
-chmod 666 /etc/squid/squid.conf
 chmod 666 /etc/squid/squid.conf.aron
 chmod 666 /etc/firehol/mac_allow
 chmod 666 /etc/firehol/firehol.conf
@@ -277,13 +275,18 @@ chmod 666 /etc/mrtg.cfg
 env LANG=C /usr/bin/mrtg
 myisamchk -r /var/lib/mysql/aron/aron_logs
 rm -f /etc/squid/squid.conf
+touch /etc/squid/squid.conf
+chmod 666 /etc/squid/squid.conf
 exit 0
 EOF
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     chown www-data:www-data /usr/local/src/aron-web/ -R
+    mkdir /usr/local/src/aron-web/.ssh
+    touch /usr/local/src/aron-web/.ssh/known_hosts
     chown -R support.support /usr/local/src/aron-web/web/npyscreen/
+    chown -R support.support /usr/local/src/aron-web/.ssh/
     chown support.support /usr/local/src/aron-web/web/support.py
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
     rm -rfv /tmp/django-suit

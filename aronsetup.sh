@@ -23,6 +23,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     pip install base58
     pip install iptools
     pip install pymysql
+    pip install netifaces
     MYSQLPASS=`pwgen -s 32 -n 1`
     echo
     ARONPASS=`pwgen -s 32 -n 1`

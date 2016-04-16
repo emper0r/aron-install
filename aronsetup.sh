@@ -284,11 +284,12 @@ EOF
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     chown www-data:www-data /usr/local/src/aron-web/ -R
-    mkdir /usr/local/src/aron-web/.ssh
-    touch /usr/local/src/aron-web/.ssh/known_hosts
+    mkdir /usr/local/src/aron-web/web/.ssh
+    touch /usr/local/src/aron-web/web/.ssh/known_hosts
     chown -R support.support /usr/local/src/aron-web/web/npyscreen/
     chown -R support.support /usr/local/src/aron-web/.ssh/
     chown support.support /usr/local/src/aron-web/web/support.py
+    chmod +x /usr/local/src/aron-web/web/support.py
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
     rm -rfv /tmp/django-suit
     rm -rfv /usr/local/src/aron-tools

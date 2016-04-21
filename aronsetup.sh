@@ -275,10 +275,13 @@ chmod 666 /etc/squid/black_domain
 chmod 666 /etc/mrtg.cfg
 env LANG=C /usr/bin/mrtg
 myisamchk -r /var/lib/mysql/aron/aron_logs
+/usr/local/src/aron-web/son-soff.py
+/etc/init.d/squid restart
 rm -f /etc/squid/squid.conf
 touch /etc/squid/squid.conf
 chmod 666 /etc/squid/squid.conf
 exit 0
+
 EOF
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
@@ -290,6 +293,7 @@ EOF
     chown -R support.support /usr/local/src/aron-web/.ssh/
     chown support.support /usr/local/src/aron-web/web/support.py
     chmod +x /usr/local/src/aron-web/web/support.py
+    chmod +x /usr/local/src/aron-web/son-soff.py
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
     rm -rfv /tmp/django-suit
     rm -rfv /usr/local/src/aron-tools

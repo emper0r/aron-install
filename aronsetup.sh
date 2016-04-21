@@ -276,7 +276,7 @@ chmod 666 /etc/mrtg.cfg
 env LANG=C /usr/bin/mrtg
 myisamchk -r /var/lib/mysql/aron/aron_logs
 /usr/local/src/aron-web/son-soff.py
-if [ $? -eq 0 ]; then
+if [ \$? -eq 0 ]; then
   /etc/init.d/squid restart
 else
   rm -f /etc/squid/squid.conf

@@ -81,7 +81,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "$HOSTNAME" > /etc/hostname
     sleep 1
     touch /etc/squid/black_domain
-    touch /etc/squid/squid.conf.aron
+    echo "QdFeP+rqUADlFrOHdOxyvJrlcB/9IPG+uqXidQUbgAYgMqktGm3GBYRlQwfFRT9RA/dmlhhnUgf5nev++OgvN554YKGtiIxPOzvj5nimUuqzlggmsYzfVWnz3MqQukwsrrHiN8GRHEtQXG9bPSO7zXGxgtlLknUkkA+nwjK/vg0PcPa8jZg2kyotohhAXL3UjItkVczCdECwR5J4Fyrulq8a0BNBM+ueGaQx43Sc87X9zaKe96TbPveAhuqF0ca6mj8BSCaHYUwG50kPXtis+ytQZDycLapKnAZr1FS+SzwwtZF7t+sTiEBZG5Pr18dwPXibm9hRH3D0in3+VyLKtlA67Vf7hauncwdMswSPLkdoga6t4h51Y6PXh0LTZR7b9SB+/Ct42rePYuSoTpE5pbV29SCyDi8wN7ybjin9WrRHxDF90tt4Z5KgtQwm56f0MAZWb3hVwj4r7HkueqAFNj1kOQI5in6350gm1omRCN5LhHHrW+4Da3Yfuxo/Gh9k5n+k1VVClxfWskGFw7MxoEroXpU5xn28RScWIMD0AII2z/bP0gB+2Yliqwc13tmNHcvMwWzPiWN3hNhidtI4IEZd5NsNNib033oVnqN813TbSjl4aRwLKmeSEk4l+SCZVQOHPBQMcoXB0Atufp3XyipQHPNPpgRNbKEYlpVeTlrgvnD5RsKCjN06HdXFTRQXtPdOiCIwqXPfI70BtYULfSKkDM+ujYD010SjloS3U8PLC2naWs4r/xcmJxaZArsnlr4N7TLQLRmf9UdDlGk0AoHOy+V55lYHAULXmMbIRr1jIMcKEklubiDqKGCAUEkBDeTiIk/h08arV/FYLtiWIg9n/lhp5+31CJG/92CeP3Iv+tS/8KNYyKblFppPqlZ439QcoALVPpYDYFqZ+keI/65HKl7UB7q+yofylSaOkVA=" > /etc/squid/squid.conf.aron
     sleep 1
     /usr/lib/squid/ssl_crtd -c -s /var/lib/ssl_db/
     rm -fv /var/log/squid/access.log

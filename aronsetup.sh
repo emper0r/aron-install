@@ -274,7 +274,7 @@ chmod 666 /var/log/syslog
 chmod 666 /etc/squid/black_domain
 chmod 666 /etc/mrtg.cfg
 env LANG=C /usr/bin/mrtg
-myisamchk -r /var/lib/mysql/aron/aron_logs
+myisamchk -r /var/lib/mysql/aron/aron_logs --force
 /usr/local/src/aron-web/son-soff.py
 chmod 666 /etc/squid/squid.conf
 /etc/init.d/squid restart

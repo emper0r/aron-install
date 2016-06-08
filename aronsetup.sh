@@ -54,7 +54,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     python setup.py install
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-web.git /usr/local/src/aron-web
     cd /usr/local/src/aron-web
-    git checkout aron-proxy
+    git checkout aron-proxy-v2
     mysql -u root -h localhost --password=$MYSQLPASS -e "CREATE DATABASE aron;"
     sleep 1
     mysql -u root -h localhost --password=$MYSQLPASS -e "GRANT ALL PRIVILEGES ON aron.* TO 'aron'@'localhost' IDENTIFIED BY '$ARONPASS';"
@@ -76,8 +76,6 @@ if [ "$WHOAMI" = "$SU" ]; then
     mv /usr/local/src/aron-tools/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
     sleep 1
     echo "192.168.50.1" > /etc/squid/aron_server
-    echo "192.168.60.1" >> /etc/squid/aron_server
-    echo "192.168.70.1" >> /etc/squid/aron_server
     echo "$HOSTNAME" > /etc/hostname
     sleep 1
     touch /etc/squid/black_domain
@@ -105,11 +103,9 @@ if [ "$WHOAMI" = "$SU" ]; then
     sleep 1
     eth0=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 1p`
     eth1=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 2p`
-    eth2=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 3p`
-    eth3=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 4p`
     ipeth0=`ifconfig $eth0 | egrep -i "inet:" | cut -d: -f 2 | awk '{print $1}'`
     cat > /etc/network/interfaces << EOF
-auto lo $eth0 $eth1 $eth2 $eth3
+auto lo $eth0 $eth1
 iface lo inet loopback
 
 iface $eth0 inet dhcp
@@ -118,16 +114,6 @@ iface $eth1 inet static
 	address 192.168.50.1
 	netmask 255.255.255.0
 	network 192.168.50.0
-
-iface $eth2 inet static
-	address 192.168.60.1
-	netmask 255.255.255.0
-	network 192.168.60.0
-
-iface $eth3 inet static
-	address 192.168.70.1
-	netmask 255.255.255.0
-	network 192.168.70.0
 EOF
     cat > /etc/firehol/firehol.conf << EOF
 # Firewall config
@@ -136,8 +122,6 @@ version 6
 LAN="10.0.0.0/8 172.16.0.0/16 192.168.0.0/16"
 
 ipv4 transparent_proxy 80 3128 "root proxy" inface $eth1
-ipv4 transparent_proxy 80 3128 "root proxy" inface $eth2
-ipv4 transparent_proxy 80 3128 "root proxy" inface $eth3
 
 FIREHOL_LOG_LEVEL=7
 interface4 $eth0 ethernet
@@ -157,25 +141,7 @@ interface4 $eth1 lan-1 src "\${LAN}"
     ipv4 server all accept
     ipv4 client all accept
 
-interface4 $eth2 lan-2 src "\${LAN}"
-    policy accept
-    ipv4 server all accept
-    ipv4 client all accept
-
-interface4 $eth3 lan-3 src "\${LAN}"
-    policy accept
-    ipv4 server all accept
-    ipv4 client all accept
-
 router4 lan-1-inet inface $eth1 outface $eth0
-    masquerade
-    route4 all accept
-
-router4 lan-2-inet inface $eth2 outface $eth0
-    masquerade
-    route4 all accept
-
-router4 lan-3-inet inface $eth3 outface $eth0
     masquerade
     route4 all accept
 EOF
@@ -192,16 +158,6 @@ subnet 192.168.50.0 netmask 255.255.255.0 {
 	interface $eth1;
 	range 192.168.50.10 192.168.50.254;
 	option routers 192.168.50.1;
-}
-subnet 192.168.60.0 netmask 255.255.255.0 {
-	interface $eth2;
-	range 192.168.60.10 192.168.60.254;
-	option routers 192.168.60.1;
-}
-subnet 192.168.70.0 netmask 255.255.255.0 {
-	interface $eth3;
-	range 192.168.70.10 192.168.70.254;
-	option routers 192.168.70.1;
 }
 EOF
     cat > /etc/mrtg.cfg << EOF
@@ -221,16 +177,6 @@ Target[localhost_$eth1]: #$eth1:public@localhost:
 SetEnv[localhost_$eth1]: MRTG_INT_IP="192.168.50.1" MRTG_INT_DESCR="No-Description"
 MaxBytes[localhost_$eth1]: 125000000
 Title[localhost_$eth1]: Traffic Analysis for $eth1 -- $HOSTNAME
-
-Target[localhost_$eth2]: #$eth2:public@localhost:
-SetEnv[localhost_$eth2]: MRTG_INT_IP="192.168.60.1" MRTG_INT_DESCR="No-Description"
-MaxBytes[localhost_$eth2]: 125000000
-Title[localhost_$eth2]: Traffic Analysis for $eth2 -- $HOSTNAME
-
-Target[localhost_$eth3]: #$eth3:public@localhost:
-SetEnv[localhost_$eth3]: MRTG_INT_IP="192.168.70.1" MRTG_INT_DESCR="No-Description"
-MaxBytes[localhost_$eth3]: 125000000
-Title[localhost_$eth3]: Traffic Analysis for $eth3 -- $HOSTNAME
 EOF
     sleep 1
     sed -i 's/#rocommunity public  localhost/rocommunity public  localhost/g' /etc/snmp/snmpd.conf
@@ -245,19 +191,21 @@ EOF
     sleep 1
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
     sed -i "s/CHANGE_ETH1/$eth1/g" /usr/local/src/aron-web/fixtures/init.sql
-    sed -i "s/CHANGE_ETH2/$eth2/g" /usr/local/src/aron-web/fixtures/init.sql
-    sed -i "s/CHANGE_ETH3/$eth3/g" /usr/local/src/aron-web/fixtures/init.sql
     sleep 1
     mysql -u aron -h localhost --database=aron --password=$ARONPASS < /usr/local/src/aron-web/fixtures/init.sql
+    /etc/init.d/apache2 stop
+    apt-get install nginx-full
+    /etc/init.d/nginx stop
+    sed -i "s/80/8888/g" /etc/nginx.conf
     sed -i "s/80/8088/g" /etc/apache2/ports.conf
     sed -i "s/80/8088/g" /etc/apache2/sites-available/000-default.conf
+    sed -i "s/80/8888/g" /etc/nginx/sites-available/default
     sed -i "s/APACHE_HOSTNAME/$HOSTNAME/g" /etc/apache2/sites-available/000-default.conf
+    cp -v /usr/share/squid/errors/Italian/ERR_ACCESS_DENIED /var/www/html/index.html
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
     echo "192.168.50.1      $HOSTNAME" >> /etc/hosts
-    echo "192.168.60.1      $HOSTNAME" >> /etc/hosts
-    echo "192.168.70.1      $HOSTNAME" >> /etc/hosts
     cat > /etc/rc.local << EOF
 #!/bin/sh -e
 chmod 666 /etc/squid/squid.conf.aron
@@ -274,7 +222,7 @@ chmod 666 /var/log/syslog
 chmod 666 /etc/squid/black_domain
 chmod 666 /etc/mrtg.cfg
 env LANG=C /usr/bin/mrtg
-myisamchk -r /var/lib/mysql/aron/aron_logs --force
+myisamchk -r /var/lib/mysql/aron/aron_logs.MYI --force
 /usr/local/src/aron-web/son-soff.py
 chmod 666 /etc/squid/squid.conf
 /etc/init.d/squid restart

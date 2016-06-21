@@ -16,7 +16,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     apt-get update
     apt-get -y -f dist-upgrade
     export DEBIAN_FRONTEND=noninteractive
-    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd snmp-mibs-downloader python-dev
+    apt-get -y install python-mysqldb python-django python-pip python-crypto firehol apache2 apache2-data apache2-bin apache2-utils pwgen sshpass libltdl7 liblua5.1-0 libmnl0 libnetfilter-conntrack3 squid-langpack ssl-cert libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libdbi-perl snmp-mibs-downloader libapache2-mod-wsgi isc-dhcp-server libsodium-dev sudo hdparm ntp python-bcrypt mrtg snmpd snmp-mibs-downloader python-dev libdbd-mysql-perl
     pip install singlemodeladmin
     pip install django-sizefield
     pip install libnacl
@@ -230,7 +230,6 @@ rm -f /etc/squid/squid.conf
 touch /etc/squid/squid.conf
 chmod 666 /etc/squid/squid.conf
 exit 0
-
 EOF
     chmod +x /etc/rc.local
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;

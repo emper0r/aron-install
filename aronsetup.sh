@@ -14,6 +14,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     clear
     echo "Aron Proxy installer is running..."
     sleep 1
+    apt-get update
+    apt-get install bc
     PERCENT=`echo "( 1 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Inserting sources packages into system to update/upgrade system"
     sleep 1
@@ -308,7 +310,7 @@ EOF
     echo "$PERCENT% - Installing NGINX web server for error page"
     sleep 1
     /etc/init.d/apache2 stop
-    apt-get install nginx-full
+    apt-get install nginx-full -y
     /etc/init.d/nginx stop
     clear
     PERCENT=`echo "( 32 / $STEP * 100.0)" | bc -l | cut -d"." -f1`

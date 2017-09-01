@@ -1,11 +1,9 @@
 #!/bin/bash
 
 clear
-WHOAMI=`whoami`
-USERGIT="foo"
-PASSGIT="bar"
 # SIZE NUMBER IS ON Gb
 SIZE="2"
+WHOAMI=`whoami`
 HOSTMAIL="server.smtp.tld"
 EMAILUSER="foo"
 EPASSWORD="bar"
@@ -92,11 +90,8 @@ if [ "$WHOAMI" = "$SU" ]; then
     PERCENT=`echo "( 11 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Setting users passwords "
     sleep 1
-    echo "support:support" | chpasswd
     echo "aron:$ARONPASS" | chpasswd
-    adduser support www-data
     echo "www-data ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
-    echo "support ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
     clear
     PERCENT=`echo "( 12 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Cloning django project theme "
@@ -112,12 +107,15 @@ if [ "$WHOAMI" = "$SU" ]; then
     PERCENT=`echo "( 14 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Installing Aron Proxy Code"
     sleep 1
-    git clone http://$USERGIT:$PASSGIT@github.com/emper0r/aron-proxy.git /usr/local/src/aron-web
+    git clone https://github.com/emper0r/aron-proxy.git /usr/local/src/aron-web
     cd /usr/local/src/aron-web
     clear
     PERCENT=`echo "( 15 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Adding User -SUPPORT- "
     /usr/sbin/adduser support --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
+    adduser support www-data
+    echo "support:support" | chpasswd
+    echo "support ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
     sleep 1
     clear
     PERCENT=`echo "( 16 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
@@ -296,7 +294,7 @@ EOF
     sleep 1
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/ARONPWD/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
-    sed -i "s/SENDER/$SENDER/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/no-reply@domain.tld/$SENDER/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/HOSTMAIL/$HOSTMAIL/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/EMAILUSER/$EMAILUSER/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/EPASSWORD/$EPASSWORD/g" /usr/local/src/aron-web/web/settings.py

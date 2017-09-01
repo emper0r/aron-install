@@ -25,12 +25,12 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "deb http://ftp.ubuntu.com/ubuntu zesty-backports main restricted universe multiverse" >> /etc/apt/sources.list
     clear
     PERCENT=`echo "( 2 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
-    echo "$PERCENT% - Excuting update system"
+    echo "$PERCENT% - Executing update system"
     sleep 1
     apt-get update
     clear
     PERCENT=`echo "( 3 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
-    echo "$PERCENT% - Excuting upgrade system"
+    echo "$PERCENT% - Executing upgrade system"
     sleep 1
     apt-get -y -f dist-upgrade
     export DEBIAN_FRONTEND=noninteractive
@@ -372,6 +372,9 @@ EOF
     chown support.support /usr/local/src/aron-web/web/support.py
     chmod +x /usr/local/src/aron-web/web/support.py
     chmod +x /usr/local/src/aron-web/son-soff.py
+    python manage.py migrate
+    mysql -u root -h localhost --password=$MYSQLPASS -e "FLUSH PRIVILEGES;"
+    INSERT INTO `auth_user` VALUES (1,'bcrypt_sha256$$2a$12$ByxY9pv.rnyvgpbEMNMK2.0ZuWlMVmswSNnmSIAWV80azP5hhfycq','2017-09-01 00:00:00',1,'admin','','','foo@bar.tld',1,1,'2017-09-01 00:00:00');
     clear
     PERCENT=`echo "( 35 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Deleting temporary files"

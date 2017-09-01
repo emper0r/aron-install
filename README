@@ -1,13 +1,12 @@
-COMPUTER TIME s.r.l
 ===================
-Progetto: Aron Tool
-Anno: Gugnio 2015
-Tony P. <antonio@ctime.it>
+Proyect: Aron Install
+Date: June 2015-2017
 
+Tony P. <emperor.cu@gmail.com>
 
 I N F O
 =======
 
-Questo script viene eseguito per installare il prodotto aron
+Script to install Aron Proxy - https://github.com/emper0r/aron-proxy
 
 $ ./aronsetup.sh

@@ -2,12 +2,14 @@
 
 clear
 WHOAMI=`whoami`
-USERGIT=""
-PASSGIT=""
-SIZE=""
-HOSTMAIL=""
-EMAILUSER=""
-EPASSWORD=""
+USERGIT="foo"
+PASSGIT="bar"
+# SIZE NUMBER IS ON Gb
+SIZE="2"
+HOSTMAIL="server.smtp.tld"
+EMAILUSER="foo"
+EPASSWORD="bar"
+SENDER="no-reply@domain.tld"
 SU="root"
 STEP=36
 if [ "$WHOAMI" = "$SU" ]; then
@@ -19,9 +21,9 @@ if [ "$WHOAMI" = "$SU" ]; then
     PERCENT=`echo "( 1 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Inserting sources packages into system to update/upgrade system"
     sleep 1
-    echo "deb http://ftp.ubuntu.com/ubuntu wily main restricted universe multiverse" > /etc/apt/sources.list
-    echo "deb http://ftp.ubuntu.com/ubuntu wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
-    echo "deb http://ftp.ubuntu.com/ubuntu wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb http://ftp.ubuntu.com/ubuntu zesty main restricted universe multiverse" > /etc/apt/sources.list
+    echo "deb http://ftp.ubuntu.com/ubuntu zesty-updates main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb http://ftp.ubuntu.com/ubuntu zesty-backports main restricted universe multiverse" >> /etc/apt/sources.list
     clear
     PERCENT=`echo "( 2 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Excuting update system"
@@ -68,14 +70,14 @@ if [ "$WHOAMI" = "$SU" ]; then
     PERCENT=`echo "( 8 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Installing Proxy"
     sleep 1
-    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3_1.0.1-3_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/libecap3-dev_1.0.1-3_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-common_3.5.15-1_all.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-cgi_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-purge_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squid-dbg_3.5.15-1_amd64.deb
-    dpkg -i /usr/local/src/aron-tools/fixtures/squidclient_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/libecap3_1.0.1-3_amd64.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/libecap3-dev_1.0.1-3_amd64.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/squid-common_3.5.15-1_all.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/squid-cgi_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/squid-purge_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/squid_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/squid-dbg_3.5.15-1_amd64.deb
+    dpkg -i /usr/local/src/aron-install/fixtures/squidclient_3.5.23-1ubuntu1_amd64.deb
     clear
     PERCENT=`echo "( 9 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Stopping Proxy"
@@ -83,16 +85,11 @@ if [ "$WHOAMI" = "$SU" ]; then
     /etc/init.d/squid stop
     clear
     PERCENT=`echo "( 10 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
-    echo "$PERCENT% - Adding User -SUPPORT- "
-    sleep 1
-    /usr/sbin/adduser support --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
-    clear
-    PERCENT=`echo "( 11 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Removing software before"
     sleep 1
     rm -rfv /usr/local/src/aron-web/
     clear
-    PERCENT=`echo "( 12 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
+    PERCENT=`echo "( 11 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Setting users passwords "
     sleep 1
     echo "support:support" | chpasswd
@@ -101,23 +98,27 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "www-data ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
     echo "support ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
     clear
-    PERCENT=`echo "( 13 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
+    PERCENT=`echo "( 12 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Cloning django project theme "
     sleep 1
     git clone https://github.com/darklow/django-suit /tmp/django-suit
     cd /tmp/django-suit
     clear
-    PERCENT=`echo "( 14 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
+    PERCENT=`echo "( 13 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Installing django project theme"
     sleep 1
     python setup.py install
     clear
-    PERCENT=`echo "( 15 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
+    PERCENT=`echo "( 14 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Installing Aron Proxy Code"
     sleep 1
     git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-web.git /usr/local/src/aron-web
     cd /usr/local/src/aron-web
-    git checkout aron-proxy-v2
+    clear
+    PERCENT=`echo "( 15 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
+    echo "$PERCENT% - Adding User -SUPPORT- "
+    /usr/sbin/adduser support --gecos ",,," --home /usr/local/src/aron-web/web/ --disabled-password --shell /usr/local/src/aron-web/web/support.py
+    sleep 1
     clear
     PERCENT=`echo "( 16 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Creating Aron Database and settings permisions"
@@ -132,13 +133,13 @@ if [ "$WHOAMI" = "$SU" ]; then
     PERCENT=`echo "( 17 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Copying files required for django theme"
     sleep 1
-    mv /usr/local/src/aron-tools/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.19-py2.7.egg/suit/config.py
-    mv /usr/local/src/aron-tools/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.19-py2.7.egg/suit/templates/admin/base.html
+    mv /usr/local/src/aron-install/fixtures/config.py /usr/local/lib/python2.7/dist-packages/django_suit-0.2.25-py2.7.egg/suit/config.py
+    mv /usr/local/src/aron-install/fixtures/base.html /usr/local/lib/python2.7/dist-packages/django_suit-0.2.25-py2.7.egg/suit/templates/admin/base.html
     clear
     PERCENT=`echo "( 18 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Copying virtualhost"
     sleep 1
-    mv /usr/local/src/aron-tools/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
+    mv /usr/local/src/aron-install/fixtures/aron.conf /etc/apache2/sites-available/000-default.conf
     clear
     PERCENT=`echo "( 19 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Preparing Proxy settings"
@@ -146,13 +147,13 @@ if [ "$WHOAMI" = "$SU" ]; then
     rm -f /etc/squid/squid.conf
     CACHESIZE=$(($SIZE * 1024))
     sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-web/Proxy/prx_wcf.py
-    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-tools/fixtures/squid.conf
-    mv /usr/local/src/aron-tools/fixtures/squid.conf /etc/squid/
-    mv /usr/local/src/aron-tools/fixtures/url_patterns /etc/squid/
-    mv -f /usr/local/src/aron-tools/fixtures/log_db_daemon /usr/lib/squid/log_db_daemon
+    sed -i "s/CHANGE/$CACHESIZE/g" /usr/local/src/aron-install/fixtures/squid.conf
+    mv /usr/local/src/aron-install/fixtures/squid.conf /etc/squid/
+    mv /usr/local/src/aron-install/fixtures/url_patterns /etc/squid/
+    mv -f /usr/local/src/aron-install/fixtures/log_db_daemon /usr/lib/squid/log_db_daemon
     chmod 755 /usr/lib/squid/log_db_daemon
-    mv /usr/local/src/aron-tools/fixtures/aron-proxy.pem /etc/squid/
-    mv /usr/local/src/aron-tools/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
+    mv /usr/local/src/aron-install/fixtures/aron-proxy.pem /etc/squid/
+    mv /usr/local/src/aron-install/fixtures/aron-proxy.der /usr/local/src/aron-web/static/
     echo "192.168.50.1" > /etc/squid/aron_server
     echo "$HOSTNAME" > /etc/hostname
     touch /etc/squid/black_domain
@@ -181,14 +182,14 @@ if [ "$WHOAMI" = "$SU" ]; then
     echo "$PERCENT% - Copying Italian error files"
     sleep 1
     rm -rfv /usr/share/squid/errors/Italian/*
-    cp -vf /usr/local/src/aron-tools/fixtures/it/* /usr/share/squid/errors/Italian/
+    cp -vf /usr/local/src/aron-install/fixtures/it/* /usr/share/squid/errors/Italian/
     clear
     PERCENT=`echo "( 22 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Taking ethernet interfaces info"
     sleep 1
     eth0=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 1p`
     eth1=`ip -o link show | awk '{print $2, $9}' | egrep -v lo | cut -d":" -f 1 | sed -n 2p`
-    ipeth0=`ifconfig $eth0 | egrep -i "inet:" | cut -d: -f 2 | awk '{print $1}'`
+    ipeth0=`ifconfig $eth0 | egrep -i "inet" | awk '{print $2}' | head -1`
     clear
     PERCENT=`echo "( 23 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Creating network file"
@@ -288,13 +289,14 @@ EOF
     PERCENT=`echo "( 28 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Unzipped blacklist"
     sleep 1
-    tar zfx /usr/local/src/aron-tools/fixtures/bigblacklist.tar.gz -C /etc/squid/
+    tar zfx /usr/local/src/aron-install/fixtures/bigblacklist.tar.gz -C /etc/squid/
     clear
     PERCENT=`echo "( 29 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Setting parameters into Aron Proxy Project"
     sleep 1
     sed -i 's/NO/YES/g' /etc/default/firehol
     sed -i "s/ARONPWD/$ARONPASS/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/SENDER/$SENDER/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/HOSTMAIL/$HOSTMAIL/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/EMAILUSER/$EMAILUSER/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/EPASSWORD/$EPASSWORD/g" /usr/local/src/aron-web/web/settings.py
@@ -376,7 +378,7 @@ EOF
     sleep 1
     rm -fv /usr/local/src/aron-web/fixtures/init.sql
     rm -rfv /tmp/django-suit
-    rm -rfv /usr/local/src/aron-tools
+    rm -rfv /usr/local/src/aron-install
     clear
     PERCENT=`echo "( 36 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Syncing file system and reboot"

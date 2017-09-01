@@ -4,6 +4,7 @@ clear
 # SIZE NUMBER IS ON Gb
 SIZE="2"
 WHOAMI=`whoami`
+DJANGO=`pwgen -s 32 -n 1`
 HOSTMAIL="server.smtp.tld"
 EMAILUSER="foo"
 EPASSWORD="bar"
@@ -298,6 +299,7 @@ EOF
     sed -i "s/HOSTMAIL/$HOSTMAIL/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/EMAILUSER/$EMAILUSER/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/EPASSWORD/$EPASSWORD/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/DJANGO/$DJANGO/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
     sed -i "s/CHANGE_ETH1/$eth1/g" /usr/local/src/aron-web/fixtures/init.sql
     clear

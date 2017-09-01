@@ -112,7 +112,7 @@ if [ "$WHOAMI" = "$SU" ]; then
     PERCENT=`echo "( 14 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Installing Aron Proxy Code"
     sleep 1
-    git clone http://$USERGIT:$PASSGIT@aron.ctimeapps.it/tony/aron-web.git /usr/local/src/aron-web
+    git clone http://$USERGIT:$PASSGIT@github.com/emper0r/aron-proxy.git /usr/local/src/aron-web
     cd /usr/local/src/aron-web
     clear
     PERCENT=`echo "( 15 / $STEP * 100.0)" | bc -l | cut -d"." -f1`

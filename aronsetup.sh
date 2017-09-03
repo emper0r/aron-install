@@ -1,16 +1,26 @@
 #!/bin/bash
 
 clear
-# SIZE NUMBER IS ON Gb
+
+# SETTINGS VARIABLES BEFORE INSTALL
+
+# SIZE NUMBER IS ON Gb (2Gb by default)
 SIZE="2"
-WHOAMI=`whoami`
-DJANGO=`pwgen -s 32 -n 1`
 HOSTMAIL="server.smtp.tld"
 EMAILUSER="foo"
 EPASSWORD="bar"
 SENDER="no-reply@domain.tld"
+
+### THIS SETTINGS MUST BE EXECUTE WHERE ARON-CONF DATABASE
+### AND DAEMON ARE LISTENING AND RUNNING OTHERWISE ARON-PROXY CAN'T ACTIVATE THE LICENSE
+SRVLIC="server-license:port"
+
+### DON'T TOUCH ###
+WHOAMI=`whoami`
+DJANGO=`pwgen -s 32 -n 1`
 SU="root"
 STEP=36
+
 if [ "$WHOAMI" = "$SU" ]; then
     clear
     echo "Aron Proxy installer is running..."
@@ -300,6 +310,7 @@ EOF
     sed -i "s/EMAILUSER/$EMAILUSER/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/EPASSWORD/$EPASSWORD/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/DJANGO/$DJANGO/g" /usr/local/src/aron-web/web/settings.py
+    sed -i "s/SRVLIC/$SRVLIC/g" /usr/local/src/aron-web/web/settings.py
     sed -i "s/CHANGE_ETH0/$eth0/g" /usr/local/src/aron-web/fixtures/init.sql
     sed -i "s/CHANGE_ETH1/$eth1/g" /usr/local/src/aron-web/fixtures/init.sql
     clear

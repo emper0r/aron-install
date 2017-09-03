@@ -373,7 +373,8 @@ EOF
     chmod +x /usr/local/src/aron-web/web/support.py
     chmod +x /usr/local/src/aron-web/son-soff.py
     python manage.py migrate &
-    mysql -u root -h localhost --password=$MYSQLPASS -e "INSERT INTO `auth_user` VALUES (1,'bcrypt_sha256$$2a$12$ByxY9pv.rnyvgpbEMNMK2.0ZuWlMVmswSNnmSIAWV80azP5hhfycq','2017-09-01 00:00:00',1,'admin','','','foo@bar.tld',1,1,'2017-09-01 00:00:00');"
+    sleep 1
+    mysql -u root -h localhost --password=$MYSQLPASS aron -e "USE aron; INSERT INTO auth_user VALUES (1,'bcrypt_sha256\$\$2b\$12\$iIuwI.uYzsV4O2u6N1wjvuxxw200ayejYv.f3bBhreWT5ysoWNrmu','2017-09-01 00:00:00.0000009',1,'admin','','','foo@bar.tld',1,1,'2017-09-01 00:00:00.000000';)"
     clear
     PERCENT=`echo "( 35 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Deleting temporary files"

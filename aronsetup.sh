@@ -17,7 +17,7 @@ SRVLIC="server-license:port"
 
 ### DON'T TOUCH ###
 WHOAMI=`whoami`
-DJANGO=`pwgen -s 32 -n 1`
+DJANGO="xz)*53&2z7w_-g_eajchp8p&*m1!9c*synd!^p-z4v9qdb*g%!"
 SU="root"
 STEP=36
 

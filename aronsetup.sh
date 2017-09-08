@@ -329,7 +329,7 @@ EOF
     PERCENT=`echo "( 32 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Setting ports for web servers"
     sleep 1
-    sed -i "s/80/8888/g" /etc/nginx.conf
+    sed -i "s/80/8888/g" /etc/nginx/nginx.conf
     sed -i "s/80/8088/g" /etc/apache2/ports.conf
     sed -i "s/80/8088/g" /etc/apache2/sites-available/000-default.conf
     sed -i "s/80/8888/g" /etc/nginx/sites-available/default
@@ -376,6 +376,7 @@ EOF
     find /etc/squid/blacklists/ -type d -exec chmod 755 {} \;
     find /etc/squid/blacklists/ -type f -exec chmod 666 {} \;
     chown www-data:www-data /usr/local/src/aron-web/ -R
+    rm -rfv /usr/local/src/aron-web/web/.ssh/
     mkdir /usr/local/src/aron-web/web/.ssh
     touch /usr/local/src/aron-web/web/.ssh/known_hosts
     chown -R support.support /usr/local/src/aron-web/web/npyscreen/
@@ -384,8 +385,8 @@ EOF
     chmod +x /usr/local/src/aron-web/web/support.py
     chmod +x /usr/local/src/aron-web/son-soff.py
     python manage.py migrate &
-    sleep 1
-    mysql -u root -h localhost --password=$MYSQLPASS aron -e "USE aron; INSERT INTO auth_user VALUES (1,'bcrypt_sha256\$\$2b\$12\$iIuwI.uYzsV4O2u6N1wjvuxxw200ayejYv.f3bBhreWT5ysoWNrmu','2017-09-01 00:00:00.0000009',1,'admin','','','foo@bar.tld',1,1,'2017-09-01 00:00:00.000000';)"
+    sleep 2
+    mysql -u root -h localhost --password=$MYSQLPASS aron -e 'INSERT INTO auth_user VALUES (1,"bcrypt_sha256$$2b$12$iIuwI.uYzsV4O2u6N1wjvuxxw200ayejYv.f3bBhreWT5ysoWNrmu","2017-09-01 00:00:00.0000009",1,"admin","","","foo@bar.tld",1,1,"2017-09-01 00:00:00.000000";)'
     clear
     PERCENT=`echo "( 35 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Deleting temporary files"

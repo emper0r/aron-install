@@ -339,6 +339,7 @@ EOF
     PERCENT=`echo "( 33 / $STEP * 100.0)" | bc -l | cut -d"." -f1`
     echo "$PERCENT% - Setting initial script"
     sleep 1
+    rm -f /etc/resolv.conf
     echo "nameserver 8.8.8.8" > /etc/resolv.conf
     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
     echo "127.0.0.1        localhost" > /etc/hosts
